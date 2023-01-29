@@ -11,3 +11,13 @@ If you don't have git installed on your local machine, you can install it like s
 ```
 git --version
 ```
+
+After you have done that enter the directory and do
+
+```
+yarn install 
+```
+or
+```
+npm install 
+```
