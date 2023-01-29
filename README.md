@@ -15,9 +15,7 @@ git --version
 After you have done that enter the directory and do
 
 ```
-yarn install 
+yarn install or 
+npm install
 ```
-or
-```
-npm install 
-```
+
