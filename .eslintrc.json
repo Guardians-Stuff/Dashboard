@@ -1,0 +1,30 @@
+{
+    "extends": "next/core-web-vitals",
+    "rules": {
+        "indent": [ "error", 4 ],
+        "linebreak-style": [ "error", "unix" ],
+        "quotes": [ "error", "single" ],
+        "semi": [ "error", "always" ],
+        "no-var": [ "error" ],
+        "no-else-return": [ "error" ],
+        "array-bracket-spacing": [ "error", "always" ],
+        "block-spacing": [ "error" ],
+        "brace-style": [ "error", "1tbs" ],
+        "comma-dangle": [ "error" ],
+        "eol-last": [ "error", "never" ],
+        "func-call-spacing": [ "error", "never" ],
+        "implicit-arrow-linebreak": [ "error" ],
+        "new-parens": [ "error", "always" ],
+        "no-lonely-if": [ "error" ],
+        "no-multi-assign": [ "error" ],
+        "no-trailing-spaces": [ "error", { "skipBlankLines": true } ],
+        "no-unneeded-ternary": [ "error" ],
+        "no-whitespace-before-property": [ "error" ],
+        "nonblock-statement-body-position": [ "error" ],
+        "object-curly-spacing": [ "error", "always" ],
+        "operator-assignment": [ "error", "always" ],
+        "semi-spacing": [ "error" ],
+        "space-infix-ops": [ "error" ],
+        "prefer-const": [ "error" ]
+    }
+}

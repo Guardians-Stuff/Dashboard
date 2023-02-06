@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap");
+
+/* @media screen and (orientation:portrait) {
+    .scrollerWrap {
+        background-image: url('https://i.imgur.com/Kj4mdrB.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+}
+@media screen and (orientation:landscape) {
+    .scrollerWrap {
+        background-image: url('https://i.imgur.com/VdbC2xe.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+} */
+
+.emptyChannelIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 68px;
+    height: 68px;
+    background-color: #484B4F;
+    border-radius: 50%;
+}
+
+.messageContainer {
+    display: flex;
+    flex-direction: column;
+    padding-left: 72px;
+    position: relative;
+}
+
+.embedContainer {
+    display: grid;
+    padding-top: .125rem;
+    padding-bottom: .125rem;
+    position: relative;
+}
+
+.embedContainer > * {
+    justify-self: start;
+    align-self: start;
+}
+
+.avatar {
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    width: 44px;
+    height: 44px;
+}
+
+.embedWrapper {
+    border: none;
+    margin-left: 10px;
+    border-radius: 5px 20px 20px 5px;
+    background: rgba(0,0,0,0.5);
+    position: relative;
+    max-width: 520px;
+    color: #ffffff;
+    font-weight: 400;
+}
+
+.embedWrapper::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left: -10px;
+    width: 0px;
+    border: solid;
+    border-width: 0 0 0 6px;
+    border-color: inherit;
+    border-radius: 20px;
+}
+
+.grid{
+    padding: .5rem 1rem 1rem .75rem;
+    display: inline-grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+.embedAuthor{
+    align-items: center;
+    display: flex;
+    grid-column: 1/1;
+}
+
+.embedMargin{
+    margin-top: 8px;
+}
+
+.embedAuthorIcon{
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.embedAuthorName{
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+.embedDescription{
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+    font-weight: 400;
+    white-space: pre-line;
+    grid-column: 1/1;
+}
+
+.messageAttachment a img{
+    max-width: 400px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+}
