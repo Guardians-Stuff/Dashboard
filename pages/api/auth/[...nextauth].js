@@ -4,7 +4,7 @@ import DiscordProvider from 'next-auth/providers/discord';
 export const authOptions = {
     providers: [
         DiscordProvider({
-            clientId: process.env.DISCORD_CLIENT_ID,
+            clientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
             clientSecret: process.env.DISCORD_CLIENT_SECRET,
             checks: []
         })
@@ -28,7 +28,7 @@ export const authOptions = {
 
 
             const response = await fetch('https://discord.com/api/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({
-                client_id: process.env.DISCORD_CLIENT_ID,
+                client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
                 client_secret: process.env.DISCORD_CLIENT_SECRET,
                 grant_type: 'refresh_token',
                 refresh_token: token.account.refresh_token
