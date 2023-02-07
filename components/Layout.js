@@ -108,7 +108,7 @@ export default function Layout(props) {
                                 <Avatar src={session.displayAvatarURL} style={{ marginRight: '5px' }} />
                                 <Typography>{session.username}#{session.discriminator}</Typography>
                             </> : <>
-                                <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`}>
+                                <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`}>
                                     <Typography>Login</Typography>
                                 </Link>
                             </> }
@@ -169,7 +169,7 @@ export default function Layout(props) {
                             </ListItemButton>
                         </ListItem>
                     </Link>
-                    <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}}&permissions=8&scope=bot`}>
+                    <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot`}>
                         <ListItem disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>

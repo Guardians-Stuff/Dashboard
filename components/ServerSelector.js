@@ -29,7 +29,7 @@ export default function ServerSelector(props) {
                 </Box>
             </ListItem>
             { guilds ? guilds.filter(guild => guild.name.toLowerCase().includes(filter)).map(guild => (
-                <Link key={guild.id} href={guild.hasBot ? `/guilds/${guild.id}` : `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}}&permissions=8&scope=bot`}>
+                <Link key={guild.id} href={guild.hasBot ? `/guilds/${guild.id}` : `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot`}>
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
