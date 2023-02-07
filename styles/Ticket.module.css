@@ -45,11 +45,11 @@
 }
 
 .avatar {
-    position: absolute;
+    position: absolute !important;
     left: 16px;
     top: 4px;
-    width: 44px;
-    height: 44px;
+    width: 44px !important;
+    height: 44px !important;
 }
 
 .embedWrapper {
@@ -95,10 +95,9 @@
 
 .embedAuthorIcon{
     margin-right: 8px;
-    width: 24px;
-    height: 24px;
+    width: 24px !important;
+    height: 24px !important;
     object-fit: contain;
-    border-radius: 50%;
 }
 
 .embedAuthorName{

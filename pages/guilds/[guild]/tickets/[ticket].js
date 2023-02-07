@@ -83,12 +83,11 @@ export default function TicketPage(props) {
         </>
     );
 }
-TicketPage.auth = true;
 
 export async function getServerSideProps(context) {
     await dbConnect();
 
-    const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${context.params.guild}`, { cache: 'no-cache', headers: { Cookie: context.req.headers.cookie } })
+    const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${context.params.guild}`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } })
         .then(async response => await response.json())
         .catch(() => null);
     
@@ -108,7 +107,7 @@ export async function getServerSideProps(context) {
         return message;
     });
 
-    /** @type {Array<GuildMember>} */ const members = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${context.params.guild}/members`, { cache: 'no-cache', headers: { Cookie: context.req.headers.cookie } })).json();
+    /** @type {Array<GuildMember>} */ const members = await (await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${context.params.guild}/members`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } })).json();
     /** @type {Array<string>} */ const ids = [ ...new Set([ ticket.user, ticket.messages.flatMap(message => message.user) ].flat() ) ];
     const users = [];
 

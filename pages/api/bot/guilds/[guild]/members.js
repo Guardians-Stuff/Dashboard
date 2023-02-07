@@ -9,7 +9,7 @@ import cacheData from 'memory-cache';
  */
 export default async function handler(req, res) {
     /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
-    if(!session) return res.status(403).send();
+    if(!session && req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).send();
 
     /** @type {Array<GuildMember>} */ const cached = cacheData.get(`/api/bot/guilds/${req.query.guild}/members`);
     if(cached) return await verifyPermissions(req, res, session, cached);
@@ -32,9 +32,10 @@ export default async function handler(req, res) {
  * @param {Array<GuildMember>} members
  */
 async function verifyPermissions(req, res, session, members){
-    const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${req.query.guild}/`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
-    if(!guild.ok) return res.status(401).send();
-
+    if(session){
+        const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${req.query.guild}/`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
+        if(!guild.ok) return res.status(401).send();
+    }
 
     res.status(200).json(members);
 }

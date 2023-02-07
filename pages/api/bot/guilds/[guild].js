@@ -9,7 +9,7 @@ import cacheData from 'memory-cache';
  */
 export default async function handler(req, res) {
     /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
-    if(!session) return res.status(403).send();
+    if(!session && req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).send();
 
     /** @type {Guild} */ const cached = cacheData.get(`/api/bot/guilds/${req.query.guild}`);
     if(cached) return await verifyPermissions(req, res, session, cached);
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
  * @param {Guild} guild
  */
 async function verifyPermissions(req, res, session, guild){
-    if(guild.owner != session.id) return res.status(401).send();
+    if(session && (guild.owner != session.id)) return res.status(401).send();
 
     res.status(200).json(guild);
 }

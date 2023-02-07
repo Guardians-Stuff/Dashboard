@@ -9,7 +9,7 @@ import cacheData from 'memory-cache';
  */
 export default async function handler(req, res) {
     /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
-    if(!session) return res.status(403).send();
+    if(!session && req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).send();
 
     /** @type {Array<Guild>} */ const cached = cacheData.get('/api/bot/guilds');
     if(cached) return res.status(200).json(cached);

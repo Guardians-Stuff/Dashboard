@@ -55,7 +55,7 @@ function PropsFetcher(props){
     const children = React.Children.map(props.children, child => {
         if(React.isValidElement(child)) return React.cloneElement(child, {
             session: session,
-            loading: status != 'authenticated',
+            loading: status == 'loading',
             mobile: mobile
         });
         return child;
