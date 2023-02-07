@@ -23,7 +23,10 @@ export default async function handler(req, res) {
             if(!botGuildsResponse.ok) return res.status(botGuildsResponse.status).send();
 
             /** @type {Array<Guild>} */ const botGuilds = await botGuildsResponse.json();
-            botGuilds.forEach(guild => userGuilds[userGuilds.indexOf(userGuilds.find(g => g.id == guild.id))].hasBot = true);
+            botGuilds.forEach(guild => {
+                const userGuild = userGuilds.find(g => g.id == guild.id);
+                if(userGuild) userGuilds[userGuilds.indexOf(userGuild)].hasBot = true;
+            });
 
             cacheData.put('/api/bot/guilds', userGuilds, 60 * 1000);
 
