@@ -9,9 +9,8 @@ const fs = require('fs');
 const dev = process.env.NODE_ENV === 'development';
 const protocol = process.env.NEXT_PROTOCOL;
 const hostname = process.env.NEXT_HOSTNAME;
-const port = process.env.NEXT_PORT;
 
-const app = Next({ dev, hostname, port });
+const app = Next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -35,8 +34,8 @@ app.prepare().then(() => {
             res.statusCode = 500;
             res.end('internal server error');
         }
-    }).listen(port, (err) => {
+    }).listen(protocol == 'https' ? 443 : 80, (err) => {
         if (err) throw err;
-        console.log(`> Ready on ${protocol}://${hostname}:${port}`);
+        console.log(`> Ready on ${protocol}://${hostname}`);
     });
 });
