@@ -14,7 +14,7 @@ export default function UserPage(props) {
     /** @type {User} */ const user = props.user;
 
     const router = useRouter();
-    if(!guild && typeof window !== 'undefined') router.push('/dashboard');
+    if(!user && typeof window !== 'undefined') router.push('/dashboard');
 
     return loading || !user ? <Layout loading title='Viewing Profile' session={session}></Layout> : (
         <>
