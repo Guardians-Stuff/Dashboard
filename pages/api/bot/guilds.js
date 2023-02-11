@@ -9,9 +9,9 @@ import cacheData from 'memory-cache';
  */
 export default async function handler(req, res) {
     /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
-    if(!session && req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).send();
+    if(!session) return res.status(403).send();
 
-    /** @type {Array<Guild>} */ const cached = cacheData.get('/api/bot/guilds');
+    /** @type {Array<Guild>} */ const cached = cacheData.get(`/api/bot/guilds-${session.id}`);
     if(cached) return res.status(200).json(cached);
 
     fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } }).then(async userGuildsResponse => {
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
                 if(userGuild) userGuilds[userGuilds.indexOf(userGuild)].hasBot = true;
             });
 
-            cacheData.put('/api/bot/guilds', userGuilds, 60 * 1000);
+            cacheData.put(`/api/bot/guilds-${session.id}`, userGuilds, 60 * 1000);
 
             res.status(200).json(userGuilds);
         }).catch(() => res.status(500).send());
