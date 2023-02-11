@@ -1,29 +1,21 @@
 import React from 'react';
 import Moment from 'moment';
 import ms from 'ms';
-import { useTheme } from '@emotion/react';
-import { useRouter } from 'next/router';
 
-import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Dialog, DialogTitle, Divider, Snackbar, Typography, useMediaQuery } from '@mui/material';
+import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Dialog, Divider, Snackbar, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import Link from 'next/link';
 
-export default function InfractionsDataGrid(props) {
+export default function InfractionsView(props) {
     /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Array<User>} */ const users = props.users;
 
     /** @type {[Array<import('@/schemas/Infractions').Infraction>, Function]} */ const [ infractions, setInfractions ] = React.useState(props.infractions);
+    React.useEffect(() => setInfractions(props.infractions), [ props.infractions ]);
     /** @type {[ import('@/schemas/Infractions').Infraction, Function ]} */ const [ dialogInfraction, setDialogInfraction ] = React.useState(null);
     const [ snackbarData, setSnackbarData ] = React.useState({ open: false, error: false, message: '' });
-
-    const getUser = (/** @type {string} */ id) => {
-        const user = users.find(user => user.id == id);
-        if(user) return user;
-
-        return { id: id, error: true };
-    };
     
     /**
      * @param {import('@/schemas/Infractions').Infraction} infraction
@@ -31,17 +23,16 @@ export default function InfractionsDataGrid(props) {
     const infractionPopup = infraction => {
         setDialogInfraction({
             ...infraction,
-            fetchedUser: getUser(infraction.user),
-            fetchedIssuer: getUser(infraction.issuer)
+            fetchedUser: users.find(user => user.id == infraction.user),
+            fetchedIssuer: users.find(user => user.id == infraction.issuer)
         });
     };
-    
     
     /**
      * @param {import('@/schemas/Infractions').Infraction} infraction
      */
     const setInactive = async infraction => {
-        const response = await fetch(`/api/infractions/${infraction.id}/inactive`);
+        const response = await fetch(`/api/infractions/${infraction._id}/inactive`);
         const json = await response.json();
 
         if(!json.error){
@@ -54,7 +45,7 @@ export default function InfractionsDataGrid(props) {
             infractionPopup(updatedInfraction);
 
             const updatedInfractions = [ ...infractions ];
-            updatedInfractions[updatedInfractions.findIndex(infraction => infraction.id == updatedInfraction.id)] = updatedInfraction;
+            updatedInfractions[updatedInfractions.findIndex(infraction => infraction._id == updatedInfraction._id)] = updatedInfraction;
 
             setInfractions(updatedInfractions);
         }
@@ -66,12 +57,12 @@ export default function InfractionsDataGrid(props) {
      * @param {import('@/schemas/Infractions').Infraction} infraction
      */
     const deleteLog = async infraction => {
-        const response = await fetch(`/api/infractions/${infraction.id}/delete`);
+        const response = await fetch(`/api/infractions/${infraction._id}/delete`);
         const json = await response.json();
 
         if(!json.error){
             setDialogInfraction(null);
-            setInfractions(infractions.filter(i => i.id != infraction.id));
+            setInfractions(infractions.filter(i => i._id != infraction._id));
         }
 
         setSnackbarData({ open: true, error: json.error, message: json.message });
@@ -144,6 +135,7 @@ export default function InfractionsDataGrid(props) {
                     pageSize={15}
                     disableSelectionOnClick
                     onRowClick={params => infractionPopup(params.row)}
+                    getRowId={params => params._id}
                     getRowClassName={params => params.row.active ? 'active' : 'inactive'}
                     columns={[
                         {
@@ -181,7 +173,7 @@ export default function InfractionsDataGrid(props) {
                             flex: 1,
                             sortable: false,
                             renderCell: params => {
-                                const user = getUser(params.row.user);
+                                const user = users.find(user => user.id == params.row.user);
 
                                 return (
                                     <Box style={{ display: 'flex', alignItems: 'center' }}>
@@ -199,7 +191,7 @@ export default function InfractionsDataGrid(props) {
                             flex: 1,
                             sortable: false,
                             renderCell: params => {
-                                const user = getUser(params.row.issuer);
+                                const user = users.find(user => user.id == params.row.issuer);
 
                                 return (
                                     <Box style={{ display: 'flex', alignItems: 'center' }}>

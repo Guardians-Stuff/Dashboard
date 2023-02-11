@@ -4,6 +4,7 @@ import { useMediaQuery } from '@mui/material';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+import Layout from '@/components/Layout';
 import CssBaseline from '@mui/material/CssBaseline';
 import '@/styles/globals.css';
 import '@fontsource/roboto/300.css';
@@ -54,7 +55,13 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
             <ThemeProvider theme={theme}>
                 <CssBaseline />
 
-                <PropsFetcher auth={Component.auth} serverSideLoading={serverSideLoading}><Component {...pageProps}/></PropsFetcher>
+                <PropsFetcher auth={Component.auth} noLayout={Component.noLayout} serverSideLoading={serverSideLoading}>
+                    { Component.noLayout ? <Component {...pageProps}/> :
+                        <Layout session={session}>
+                            <Component {...pageProps}/>
+                        </Layout>
+                    }
+                </PropsFetcher>
             </ThemeProvider>
         </SessionProvider>
     );
@@ -74,7 +81,8 @@ function PropsFetcher(props){
             loading: serverSideLoading || status == 'loading',
             mobile: mobile
         });
-        return child;
+
+        return serverSideLoading || status == 'loading' ? <Layout loading session={session}/> : child;
     });
 
     return children;

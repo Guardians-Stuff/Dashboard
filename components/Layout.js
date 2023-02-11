@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { styled, useTheme } from '@mui/material/styles';
 
-import { AppBar as MuiAppBar, Avatar, Box, CircularProgress, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { AppBar as MuiAppBar, Avatar, Box, CircularProgress, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Typography } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import HomeIcon from '@mui/icons-material/Home';
 import LaunchIcon from '@mui/icons-material/Launch';
-import ServerSelector from './ServerSelector';
+import SearchIcon from '@mui/icons-material/Search';
 import GuildNavigator from './GuildNavigator';
 
 const drawerWidth = 280;
@@ -21,13 +21,13 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen
     }),
-    marginLeft: `-${drawerWidth}px`,
+    marginLeft: 0,
     ...(open && {
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen
         }),
-        marginLeft: 0
+        marginLeft: `${drawerWidth}px`
     })
 }));
 
@@ -71,22 +71,32 @@ const LoadingCircle = styled(CircularProgress, { shouldForwardProp: (prop) => pr
 export default function Layout(props) {
     const theme = useTheme();
     const router = useRouter();
-    const mobile = !useMediaQuery('(min-width:600px)');
 
     /** @type {Boolean} */ const loading = props.loading;
+    /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {import('next-auth').Session} */ const session = props.session;
     /** @type {string} */ const title = props.title;
     /** @type {Guild} */ const guild = props.guild;
-    /** @type {Array<APIGuild>} */ const guilds = props.guilds;
+
+    /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
 
     const [ drawerOpen, setDrawerOpen ] = React.useState(!mobile);
     React.useEffect(() => setDrawerOpen(!mobile), [ mobile ]);
-    const handleDrawerOpen = () => setDrawerOpen(true);
-    const handleDrawerClose = () => setDrawerOpen(false);
-
     const [ anchorElUser, setAnchorElUser ] = React.useState(null);
-    const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
-    const handleCloseUserMenu = () => setAnchorElUser(null);
+    const [ filter, setFilter ] = React.useState('');
+    
+    React.useEffect(() => {
+        async function fetchGuilds(){
+            console.log('lemme fetch');
+            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache' })
+                .then(async response => await response.json())
+                .catch(() => null);
+            
+            setGuilds(userGuilds);
+        }
+
+        if(typeof session != 'undefined') fetchGuilds();
+    }, [ session ]);
 
     return (
         <>
@@ -95,7 +105,7 @@ export default function Layout(props) {
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
+                        onClick={() => setDrawerOpen(true)}
                         edge="start"
                         sx={{ mr: 2, ...(drawerOpen && { display: 'none' }) }}>
                         <MenuIcon />
@@ -103,7 +113,7 @@ export default function Layout(props) {
                     <Typography variant="h6" noWrap component="div">{guild && !mobile ? `${guild.name} | ` : ''}{title}</Typography>
                     <Box sx={{ flexGrow: 1 }}></Box>
                     <Box sx={{ flexGrow: 0, display: loading ? 'none' : 'block' }}>
-                        <IconButton onClick={handleOpenUserMenu} style={{ p: 0, borderRadius: '50px' }}>
+                        <IconButton onClick={e => setAnchorElUser(e.currentTarget)} style={{ p: 0, borderRadius: '50px' }}>
                             { session ? <>
                                 <Avatar src={session.displayAvatarURL} style={{ marginRight: '5px' }} />
                                 <Typography>{session.username}#{session.discriminator}</Typography>
@@ -127,12 +137,12 @@ export default function Layout(props) {
                                 horizontal: 'right'
                             }}
                             open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
+                            onClose={() => setAnchorElUser(null)}
                         >
-                            <MenuItem onClick={() => router.push(`/users/${session.id}`) && handleCloseUserMenu()}>
+                            <MenuItem onClick={() => router.push(`/users/${session.id}`) && setAnchorElUser(null)}>
                                 <Typography textAlign='center'>Profile</Typography>
                             </MenuItem>
-                            <MenuItem onClick={() => router.push('/api/logout') && handleCloseUserMenu()}>
+                            <MenuItem onClick={() => router.push('/api/logout') && setAnchorElUser(null)}>
                                 <Typography textAlign='center' color='tomato'>Logout</Typography>
                             </MenuItem>
                         </Menu>
@@ -153,11 +163,13 @@ export default function Layout(props) {
                 variant={mobile ? 'temporary' : 'persistent'}
             >
                 <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={() => setDrawerOpen(false)}>
                         <ChevronLeftIcon />
                     </IconButton>
                 </DrawerHeader>
+
                 <Divider />
+
                 <List>
                     <Link href='/dashboard'>
                         <ListItem disablePadding>
@@ -179,11 +191,28 @@ export default function Layout(props) {
                             </ListItemButton>
                         </ListItem>
                     </Link>
-                    <Divider></Divider>
-                    { guilds ? <ServerSelector guilds={guilds} /> : guild ? <GuildNavigator guild={guild} /> : '' }
+
+                    <Divider />
+
+                    <ListItem disablePadding>
+                        <Box style={{ padding: '8px 16px 8px 16px', flexGrow: 1, display: 'flex', alignItems: 'flex-end' }}>
+                            <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+                            <TextField
+                                error={guilds.length != 0 && guilds.filter(guild => guild.name.toLowerCase().includes(filter)).length == 0}
+                                variant='standard'
+                                label='Filter servers...'
+                                style={{ width: '100%' }}
+                                onChange={e => setFilter(e.target.value.toLowerCase())}
+                            />
+                        </Box>
+                    </ListItem>
+
+                    { guilds ? guilds.filter(guild => guild.name.toLowerCase().includes(filter)).map(guild => (
+                        <GuildNavigator key={guild.id} guild={guild} />
+                    )) : '' }
                 </List>
             </Drawer>
-            <Main className={loading ? 'loading' : ''} open={drawerOpen || mobile} style={{ display: 'flex', flexDirection: 'column' }}>
+            <Main className={loading ? 'loading' : ''} open={drawerOpen || mobile} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <DrawerHeader />
                 { loading ? <LoadingCircle open={!drawerOpen && !mobile} className='loading-progress' /> : props.children }
             </Main>

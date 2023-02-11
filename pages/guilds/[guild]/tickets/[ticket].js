@@ -32,53 +32,51 @@ export default function TicketPage(props) {
                 <title>Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box sx={{ display: 'flex', height: '100%' }}>
-                <Layout title={`Ticket ${ticket?.id}`} session={session} guild={guild} ticket={ticket}>
-                    <Box>
-                        <Box className={styles.emptyChannelIcon}>
-                            <EmptyChannelIcon sx={{ width: '44px', height: '44px' }}></EmptyChannelIcon>
-                        </Box>
-                        <Typography variant='h4'>Welcome to #ticket-{ticketUser.username.toLowerCase().split(' ').join('-')}!</Typography>
-                        <Typography>This is the start of the #ticket-{ticketUser.username.toLowerCase().split(' ').join('-')} channel. </Typography>
+            <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+                <Box>
+                    <Box className={styles.emptyChannelIcon}>
+                        <EmptyChannelIcon sx={{ width: '44px', height: '44px' }}></EmptyChannelIcon>
                     </Box>
+                    <Typography variant='h4'>Welcome to #ticket-{ticketUser.username.toLowerCase().split(' ').join('-')}!</Typography>
+                    <Typography>This is the start of the #ticket-{ticketUser.username.toLowerCase().split(' ').join('-')} channel. </Typography>
+                </Box>
 
-                    <Box><Divider><Typography>{Moment(ticket.time).format('MMMM DD, YYYY')}</Typography></Divider></Box>
+                <Box><Divider><Typography>{Moment(ticket.time).format('MMMM DD, YYYY')}</Typography></Divider></Box>
 
-                    {ticket.messages.map(message => {
-                        const user = users.find(user => user.id == message.user);
+                {ticket.messages.map(message => {
+                    const user = users.find(user => user.id == message.user);
 
-                        return (
-                            <Box key={message.id} className={styles.messageContainer}>
-                                <Avatar className={styles.avatar} src={user.displayAvatarURL}></Avatar>
-                                <h2>
-                                    <span style={{ fontSize: '1rem', fontWeight: '400', marginRight: '0.5rem' }}>{user.username}({user.id})</span>
-                                    <span style={{ fontSize: '.75rem', fontWeight: 300 }}>{Moment(message.time).format('DD/MM/YYYY HH:mm:ss')}</span>
-                                </h2>
+                    return (
+                        <Box key={message.id} className={styles.messageContainer}>
+                            <Avatar className={styles.avatar} src={user.displayAvatarURL}></Avatar>
+                            <h2>
+                                <span style={{ fontSize: '1rem', fontWeight: '400', marginRight: '0.5rem' }}>{user.username}({user.id})</span>
+                                <span style={{ fontSize: '.75rem', fontWeight: 300 }}>{Moment(message.time).format('DD/MM/YYYY HH:mm:ss')}</span>
+                            </h2>
 
-                                <Box className={styles.embedContainer}>
-                                    <Box className={styles.embedWrapper} sx={{ borderColor: '#2DBCFF !important' }}>
-                                        <Box className={styles.grid}>
-                                            <Box className={`${styles.embedAuthor} ${styles.embedMargin}`}>
-                                                <Avatar className={styles.embedAuthorIcon} src={user.displayAvatarURL}></Avatar>
-                                                <span class={styles.embedAuthorName}>{user.username}</span>
-                                            </Box>
-                                            <Box class={`${styles.embedDescription} ${styles.embedMargin}`}>{message.message}</Box>
+                            <Box className={styles.embedContainer}>
+                                <Box className={styles.embedWrapper} sx={{ borderColor: '#2DBCFF !important' }}>
+                                    <Box className={styles.grid}>
+                                        <Box className={`${styles.embedAuthor} ${styles.embedMargin}`}>
+                                            <Avatar className={styles.embedAuthorIcon} src={user.displayAvatarURL}></Avatar>
+                                            <span class={styles.embedAuthorName}>{user.username}</span>
                                         </Box>
+                                        <Box class={`${styles.embedDescription} ${styles.embedMargin}`}>{message.message}</Box>
                                     </Box>
-                                    {message.images.map((image, index) => {
-                                        return (
-                                            <Box key={index} className={styles.messageAttachment}>
-                                                <Link rel='noreferrer noopener' target='_blank' role='button' href={image}>
-                                                    <img alt='' src={image} />
-                                                </Link>
-                                            </Box>
-                                        );
-                                    })}
                                 </Box>
+                                {message.images.map((image, index) => {
+                                    return (
+                                        <Box key={index} className={styles.messageAttachment}>
+                                            <Link rel='noreferrer noopener' target='_blank' role='button' href={image}>
+                                                <img alt='' src={image} />
+                                            </Link>
+                                        </Box>
+                                    );
+                                })}
                             </Box>
-                        );
-                    })}
-                </Layout>
+                        </Box>
+                    );
+                })}
             </Box>
         </>
     );
