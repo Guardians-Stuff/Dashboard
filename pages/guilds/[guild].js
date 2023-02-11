@@ -15,7 +15,7 @@ export default function GuildPage(props) {
     const router = useRouter();
     if(!guild && typeof window !== 'undefined') router.push('/dashboard');
 
-    return loading || !guild ? <Layout loading title='Overview' session={session}></Layout> : (
+    return loading || !guild ? <Layout loading title='Overview' session={session} guild={guild}></Layout> : (
         <>
             <Head>
                 <title>Guardian Dashboard</title>

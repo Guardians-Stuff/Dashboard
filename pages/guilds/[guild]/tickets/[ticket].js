@@ -24,16 +24,16 @@ export default function TicketPage(props) {
     const ticketUser = users.find(user => user.id == ticket.user);
 
     const router = useRouter();
-    if(!guild && typeof window !== 'undefined') router.push('/dashboard');
+    if((!guild || !ticket) && typeof window !== 'undefined') router.push('/dashboard');
 
-    return loading || !guild ? <Layout loading title='Tickets' session={session}></Layout> : (
+    return loading || !guild || !ticket ? <Layout loading title={`Ticket ${ticket?.id}`} session={session} guild={guild}></Layout> : (
         <>
             <Head>
                 <title>Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box sx={{ display: 'flex', height: '100%' }}>
-                <Layout title='Ticket' session={session} guild={guild} ticket={ticket}>
+                <Layout title={`Ticket ${ticket?.id}`} session={session} guild={guild} ticket={ticket}>
                     <Box>
                         <Box className={styles.emptyChannelIcon}>
                             <EmptyChannelIcon sx={{ width: '44px', height: '44px' }}></EmptyChannelIcon>
@@ -91,10 +91,10 @@ export async function getServerSideProps(context) {
         .then(async response => await response.json())
         .catch(() => null);
     
-    if(!guild) return { props: { guild: null, ticket: [], users: [] } };
+    if(!guild) return { props: { guild: null, ticket: null, users: [] } };
 
-    const result = await Tickets.findOne({ _id: context.params.ticket, guild: context.params.guild });
-    if(!result) return { props: { ticket: null, users: [] } };
+    const result = await Tickets.findOne({ _id: context.params.ticket, guild: context.params.guild }).catch(() => null);
+    if(!result) return { props: { guild: null, ticket: null, users: [] } };
 
     /** @type {import('@/schemas/Tickets').Ticket} */ const ticket = result?.toObject();
     ticket._id = result._id.toString();

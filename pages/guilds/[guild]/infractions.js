@@ -20,7 +20,7 @@ export default function InfractionsPage(props) {
     const router = useRouter();
     if(!guild && typeof window != 'undefined') router.push('/dashboard');
 
-    return loading || !guild ? <Layout loading title='Infractions' session={session}></Layout> : (
+    return loading || !guild ? <Layout loading title='Infractions' session={session} guild={guild}></Layout> : (
         <>
             <Head>
                 <title>Guardian Dashboard</title>
