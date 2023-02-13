@@ -7,14 +7,15 @@ import Head from 'next/head';
 import styles from '@/styles/Commands.module.css';
 import Navbar from '@/components/Navbar';
 
-import { commandsRef } from '../commandsRef';
-
-export default function Commands() {
+export default function Commands(props) {
     const router = useRouter();
     const { data: session } = useSession();
     if(session) router.push('/dashboard');
 
-    const [ activeCategory, setCategory ] = useState('Public');
+    const commands = props.commands;
+    const categories = [ ...new Set(commands.map(command => command.category)) ];
+
+    const [ activeCategory, setCategory ] = useState('public');
 
     return(
         <>
@@ -30,18 +31,26 @@ export default function Commands() {
                         <div className={styles.body}>
                             <h1 className={styles.header}>Commands</h1>
                             <ul className={styles.categories} style={{ listStyle: 'none' }}>
-                                {Object.keys(commandsRef).map((category, index) => (
-                                    <li key={index} onClick={() => {
+                                {categories.map(category => (
+                                    <li key={category} onClick={() => {
                                         setCategory(category);
-                                    }}>{category}</li>
+                                    }}>{category.charAt(0).toUpperCase() + category.slice(1)}</li>
                                 ))}
                             </ul>
                             <ul className={styles.commands} style={{ listStyle: 'none' }}>
-                                {commandsRef[activeCategory].map((command) => (
-                                    <li key={command[0]}>
-                                        <h3>{command[0]}</h3>
-                                        <p>{command[1]}</p>
-                                    </li>
+                                {commands.filter(command => command.category == activeCategory).map(command => (
+                                    <div key={command.name}>
+                                        <li>
+                                            <h3>/{command.name}</h3>
+                                            <p>{command.description}</p>
+                                        </li>
+                                        {command.subcommands.map(subcommand => (
+                                            <li key={`${command.name}-${subcommand.name}`}>
+                                                <h3>/{command.name} {subcommand.name}</h3>
+                                                <p>{subcommand.description}</p>
+                                            </li>
+                                        ))}
+                                    </div>
                                 ))}
                             </ul>
                         </div>
@@ -56,3 +65,11 @@ export default function Commands() {
     );
 }
 Commands.noLayout = true;
+
+export async function getServerSideProps(context){
+    const commands = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/commands`, { cache: 'no-cache', headers: { 'Cookie': context.req.headers.cookie } })
+        .then(async response => await response.json())
+        .catch(() => []);
+
+    return { props: { commands: commands } };
+}
