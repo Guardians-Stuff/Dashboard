@@ -6,7 +6,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 import styles from '@/styles/Home.module.css';
-import LinkIcon from '@/components/icons/LinkIcon';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import Navbar from '@/components/Navbar';
 
 
@@ -31,7 +31,7 @@ export default function Home() {
                             <h3 className={styles.subheader}>The most powerful and advanced multi-purpose Discord bot with a web dashboard focused on advanced moderation to secure servers.</h3>
                             { /* TODO: Add href for server invite */ }
                             <Link href={'#'} style={{ marginTop: 25, marginBottom: 200 }}>
-                                <Button variant="contained" color="blurple" startIcon={<LinkIcon />} onClick={() => {
+                                <Button variant="contained" color="blurple" startIcon={<InsertLinkIcon style={{ transform: 'rotate(-45deg)' }}/>} onClick={() => {
                                     alert('Server invite not implemented yet');
                                 }}>Invite to server</Button>
                             </Link>
@@ -42,7 +42,7 @@ export default function Home() {
                             </div>
                             { /* TODO: Add href for server invite */ }
                             <Link href={'#'} style={{ marginTop: 25, marginBottom: 200 }}>
-                                <Button variant="contained" color="blurple" startIcon={<LinkIcon />} onClick={() => {
+                                <Button variant="contained" color="blurple" startIcon={<InsertLinkIcon style={{ transform: 'rotate(-45deg)' }} />} onClick={() => {
                                     alert('Server invite not implemented yet');
                                 }}>Invite to server</Button>
                             </Link>
