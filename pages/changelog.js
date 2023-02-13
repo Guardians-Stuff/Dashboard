@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar';
 
 import { changes } from '../changes';
 
-export default function Commands() {
+export default function Changelog() {
     const router = useRouter();
     const { data: session } = useSession();
     if(session) router.push('/dashboard');
