@@ -2,7 +2,7 @@
 	height: 200vh;
 	display: flex;
 	
-	background-image: linear-gradient(rgba(0,0,0,0) 20%, rgba(0,0,0,1) 60%, rgba(0,0,0,1) 100%),
+	background-image: linear-gradient(rgba(0,0,0,0) 20%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 100%),
 		url('https://e1.pxfuel.com/desktop-wallpaper/230/590/desktop-wallpaper-2-lofi-anime-aesthetic-ipad-lofi-sunset-anime.jpg');
 	background-size: 100vw;
   background-blend-mode: multiply;
@@ -24,34 +24,21 @@
 
 .body {
 	position: relative;
-	padding-top: 200px;
+	padding-top: 100px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 }
 
 .header {
 	margin-top: auto;
-	font-size: 5rem;
-	text-align: center;
 }
 
-.subheader {
-	width: 50%;
-	color:#c9c9c9;
-	text-align: center;
-}
-
-.description {
-	background-color: rgba(31, 31, 31, 0.75);
-	width: 75%;
-	color:#a6a6a6;
-	text-align: center;
-	margin-top: 100px;
-	padding: 50px;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-areas: 'left center right';
+.date {
+	margin-top: 20px;
+	border-color: rgba(255, 255, 255, 0.5);
+	border-width: 0 0 1px 0;
+	border-style: solid;
+	margin-bottom: -1px;
 }
 
 .footer {
