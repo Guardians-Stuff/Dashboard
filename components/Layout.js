@@ -90,7 +90,7 @@ export default function Layout(props) {
             console.log('lemme fetch');
             const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache' })
                 .then(async response => await response.json())
-                .catch(() => null);
+                .catch(() => []);
             
             setGuilds(userGuilds);
         }

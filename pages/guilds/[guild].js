@@ -104,7 +104,7 @@ GuildPage.auth = true;
 export async function getServerSideProps(context){
     const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${context.params.guild}`, { cache: 'no-cache', headers: { 'Cookie': context.req.headers.cookie } })
         .then(async response => await response.json())
-        .catch(() => null);
+        .catch(() => []);
 
     return { props: { guild: guild } };
 }
