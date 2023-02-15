@@ -139,7 +139,7 @@ export default function Layout(props) {
                             open={Boolean(anchorElUser)}
                             onClose={() => setAnchorElUser(null)}
                         >
-                            <MenuItem onClick={() => router.push(`/users/${session.id}`) && setAnchorElUser(null)}>
+                            <MenuItem onClick={() => router.push(`/dashboard/users/${session.id}`) && setAnchorElUser(null)}>
                                 <Typography textAlign='center'>Profile</Typography>
                             </MenuItem>
                             <MenuItem onClick={() => router.push('/api/logout') && setAnchorElUser(null)}>

@@ -16,7 +16,7 @@ export default function TicketsView(props){
 
                 return (
                     <Grid item key={ticket._id} sx={{ minWidth: '281px' }}>
-                        <Link href={`/guilds/${guild.id}/tickets/${ticket._id}`}>
+                        <Link href={`/dashboard/guilds/${guild.id}/tickets/${ticket._id}`}>
                             <Card>
                                 <CardContent>
                                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

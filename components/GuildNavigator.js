@@ -23,7 +23,7 @@ export default function GuildNavigator(props) {
 
     return (
         <>
-            <Link key={guild.id} href={guild.hasBot ? `/guilds/${guild.id}` : `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot`}>
+            <Link key={guild.id} href={guild.hasBot ? `/dashboard/guilds/${guild.id}` : `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot`}>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemIcon>
@@ -37,7 +37,7 @@ export default function GuildNavigator(props) {
 
             <Collapse in={openCollapse} timeout='auto' unmountOnExit>
                 <List disablePadding sx={{ pl: 4 }}>
-                    <ListItem onClick={() => router.push(`/guilds/${guild.id}`, undefined, { shallow: true })}disablePadding>
+                    <ListItem onClick={() => router.push(`/dashboard/guilds/${guild.id}`, undefined, { shallow: true })}disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
                                 <InfoIcon></InfoIcon>
@@ -45,7 +45,7 @@ export default function GuildNavigator(props) {
                             <ListItemText primary='Overview' />
                         </ListItemButton>
                     </ListItem>
-                    <ListItem onClick={() => router.push(`/guilds/${guild.id}?tab=1`, undefined, { shallow: true })}disablePadding>
+                    <ListItem onClick={() => router.push(`/dashboard/guilds/${guild.id}?tab=1`, undefined, { shallow: true })}disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
                                 <GppMaybeIcon></GppMaybeIcon>
@@ -53,7 +53,7 @@ export default function GuildNavigator(props) {
                             <ListItemText primary='Infractions' />
                         </ListItemButton>
                     </ListItem>
-                    <ListItem onClick={() => router.push(`/guilds/${guild.id}?tab=2`, undefined, { shallow: true })}disablePadding>
+                    <ListItem onClick={() => router.push(`/dashboard/guilds/${guild.id}?tab=2`, undefined, { shallow: true })}disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
                                 <ChatIcon></ChatIcon>

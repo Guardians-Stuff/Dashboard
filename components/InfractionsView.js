@@ -114,8 +114,8 @@ export default function InfractionsView(props) {
                     </CardContent>
                     <CardActions>
                         <Button size="small" onClick={() => setInactive(dialogInfraction)} sx={{ display: dialogInfraction?.active ? 'block' : 'none' }}>Set Inactive</Button>
-                        <Button size="small"><Link href={`/guilds/${dialogInfraction?.guild}/members/${dialogInfraction?.user}`}>View User</Link></Button>
-                        <Button size="small" sx={{ marginRight: 'auto' }}><Link href={`/guilds/${dialogInfraction?.guild}/members/${dialogInfraction?.issuer}`}>View Issuer</Link></Button>
+                        <Button size="small"><Link href={`/dashboard/guilds/${dialogInfraction?.guild}/members/${dialogInfraction?.user}`}>View User</Link></Button>
+                        <Button size="small" sx={{ marginRight: 'auto' }}><Link href={`/dashboard/guilds/${dialogInfraction?.guild}/members/${dialogInfraction?.issuer}`}>View Issuer</Link></Button>
                         <Button size="small" onClick={() => deleteLog(dialogInfraction)} sx={{ color: 'tomato' }}>Delete Log</Button>
                     </CardActions>
                 </Card>
