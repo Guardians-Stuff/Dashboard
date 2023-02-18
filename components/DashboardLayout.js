@@ -105,7 +105,7 @@ export default function DashboardLayout(props) {
                         sx={{ mr: 2, ...(drawerOpen && { display: 'none' }) }}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">{guild && !mobile ? `${guild.name} | ` : ''}{title}</Typography>
+                    {/* <Typography variant="h6" noWrap component="div">{guild && !mobile ? `${guild.name} | ` : ''}{title}</Typography> */}
                     <Box sx={{ flexGrow: 1 }}></Box>
                     <Box sx={{ flexGrow: 0, display: loading ? 'none' : 'block' }}>
                         <AppBarUser session={session} mobile={mobile} />
