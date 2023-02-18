@@ -10,14 +10,11 @@ import { Avatar, Divider, Typography } from '@mui/material';
 import EmptyChannelIcon from '@/components/icons/EmptyChannelIcon';
 
 import styles from '@/styles/Ticket.module.css';
-import Layout from '@/components/Layout';
 import dbConnect from '@/lib/dbConnect';
 import Tickets from '@/schemas/Tickets';
 
 
 export default function TicketPage(props) {
-    /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = props.session;
-    /** @type {Boolean} */ const loading = props.loading;
     /** @type {Guild} */ const guild = props.guild;
     /** @type {import('@/schemas/Tickets').Ticket} */ const ticket = props.ticket;
     /** @type {Array<User | GuildMember>} */ const users = props.users;
@@ -26,7 +23,7 @@ export default function TicketPage(props) {
     const router = useRouter();
     if((!guild || !ticket) && typeof window !== 'undefined') router.push('/dashboard');
 
-    return loading || !guild || !ticket ? <Layout loading title={`Ticket ${ticket?.id}`} session={session} guild={guild}></Layout> : (
+    return !guild || !ticket ? <></> : (
         <>
             <Head>
                 <title>Guardian Dashboard</title>

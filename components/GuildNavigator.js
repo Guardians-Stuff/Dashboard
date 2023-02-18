@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { Avatar, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
@@ -8,7 +9,6 @@ import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 import ChatIcon from '@mui/icons-material/Chat';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useRouter } from 'next/router';
 
 export default function GuildNavigator(props) {
     const router = useRouter();

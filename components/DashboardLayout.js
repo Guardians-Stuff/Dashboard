@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 import { AppBar as MuiAppBar, Avatar, Box, CircularProgress, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Typography } from '@mui/material';
 
@@ -11,6 +10,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LaunchIcon from '@mui/icons-material/Launch';
 import SearchIcon from '@mui/icons-material/Search';
 import GuildNavigator from './GuildNavigator';
+import AppBarUser from './AppBarUser';
 
 const drawerWidth = 280;
 
@@ -68,23 +68,18 @@ const LoadingCircle = styled(CircularProgress, { shouldForwardProp: (prop) => pr
     })
 }));
 
-export default function Layout(props) {
-    const theme = useTheme();
-    const router = useRouter();
-
+export default function DashboardLayout(props) {
     /** @type {Boolean} */ const loading = props.loading;
     /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {import('next-auth').Session} */ const session = props.session;
     /** @type {string} */ const title = props.title;
     /** @type {Guild} */ const guild = props.guild;
-
-    /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
-
+    
     const [ drawerOpen, setDrawerOpen ] = React.useState(!mobile);
     React.useEffect(() => setDrawerOpen(!mobile), [ mobile ]);
-    const [ anchorElUser, setAnchorElUser ] = React.useState(null);
     const [ filter, setFilter ] = React.useState('');
     
+    /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
     React.useEffect(() => {
         async function fetchGuilds(){
             console.log('lemme fetch');
@@ -113,39 +108,7 @@ export default function Layout(props) {
                     <Typography variant="h6" noWrap component="div">{guild && !mobile ? `${guild.name} | ` : ''}{title}</Typography>
                     <Box sx={{ flexGrow: 1 }}></Box>
                     <Box sx={{ flexGrow: 0, display: loading ? 'none' : 'block' }}>
-                        <IconButton onClick={e => setAnchorElUser(e.currentTarget)} style={{ p: 0, borderRadius: '50px' }}>
-                            { session ? <>
-                                <Avatar src={session.displayAvatarURL} style={{ marginRight: '5px' }} />
-                                <Typography>{session.username}#{session.discriminator}</Typography>
-                            </> : <>
-                                <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`}>
-                                    <Typography>Login</Typography>
-                                </Link>
-                            </> }
-                        </IconButton>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right'
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right'
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={() => setAnchorElUser(null)}
-                        >
-                            <MenuItem onClick={() => router.push(`/dashboard/users/${session.id}`) && setAnchorElUser(null)}>
-                                <Typography textAlign='center'>Profile</Typography>
-                            </MenuItem>
-                            <MenuItem onClick={() => router.push('/api/logout') && setAnchorElUser(null)}>
-                                <Typography textAlign='center' color='tomato'>Logout</Typography>
-                            </MenuItem>
-                        </Menu>
+                        <AppBarUser session={session} mobile={mobile} />
                     </Box>
                 </Toolbar>
             </AppBar>

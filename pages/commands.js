@@ -1,21 +1,25 @@
-import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import Head from 'next/head';
 import { useState } from 'react';
 
-import Head from 'next/head';
+import { Box, Collapse, Tab, Tabs, Typography } from '@mui/material';
+import { TabContext, TabPanel } from '@mui/lab';
 
-import styles from '@/styles/Commands.module.css';
-import Navbar from '@/components/Navbar';
+import styles from '@/styles/Home.module.css';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ExpandMore } from '@mui/icons-material';
 
 export default function Commands(props) {
-    const router = useRouter();
-    const { data: session } = useSession();
-    if(session) router.push('/dashboard');
-
+    // TODO: Add JSDOC
     const commands = props.commands;
     const categories = [ ...new Set(commands.map(command => command.category)) ];
 
-    const [ activeCategory, setCategory ] = useState('public');
+    const [ activeCategory, setActiveCategory ] = useState('public');
+    const [ collapsedCommands, setCollapsedCommands ] = useState(commands
+        .filter(command => command.subcommands.length != 0)
+        .map(command => command.name)
+        .reduce((object, command) => ({ ...object, [command]: false }), {})
+    );
 
     return(
         <>
@@ -23,8 +27,72 @@ export default function Commands(props) {
                 <title>Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={styles.container}>
-                <Navbar />
+            <Box className={styles.background}>
+                <Typography variant='h3' style={{ padding: '24px 0 0 24px' }}>Commands</Typography>
+                <TabContext value={activeCategory}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', margin: '0 24px 0 24px' }}>
+                        <Tabs
+                            variant='scrollable'
+                            allowScrollButtonsMobile
+                            value={activeCategory}
+                            onChange={(_, newTab) => setActiveCategory(newTab)}
+                        >
+                            {categories.map(category => (
+                                <Tab
+                                    label={category.charAt(0).toUpperCase() + category.slice(1)}
+                                    key={category}
+                                    value={category}
+                                />
+                            ))}
+                        </Tabs>
+                    </Box>
+
+                    {categories.map(category => (
+                        <TabPanel
+                            key={`${category}-panel`}
+                            value={category}
+                        >
+                            <ul className={styles.commandContainer}>
+                                {commands.filter(command => command.category == category).map(command => (
+                                    <Box key={command.name}>
+                                        <Box className={styles.command}>
+                                            <Typography variant='h6'>/{command.name}</Typography>
+                                            <Typography variant='h7'>{command.description}</Typography>
+                                            {command.subcommands.length != 0 ?
+                                                <>
+                                                    {collapsedCommands[command.name] ?
+                                                        <ExpandLessIcon
+                                                            className={styles.commandIcon}
+                                                            onClick={() => setCollapsedCommands({ [command.name]: false })}
+                                                        />
+                                                        :
+                                                        <ExpandMore
+                                                            className={styles.commandIcon}
+                                                            onClick={() => setCollapsedCommands({ [command.name]: true })}
+                                                        />
+                                                    }
+                                                    <Collapse in={collapsedCommands[command.name]} timeout='auto' unmountOnExit>
+                                                        {command.subcommands.map(subcommand => (
+                                                            <Box key={`${command.name}-${subcommand.name}`}>
+                                                                <Box className={styles.command}>
+                                                                    <h3>/{command.name} {subcommand.name}</h3>
+                                                                    <p>{subcommand.description}</p>
+                                                                </Box>
+                                                            </Box>
+                                                        ))}
+                                                    </Collapse>
+                                                </>
+                                                : ''
+                                            }
+                                        </Box>
+                                    </Box>
+                                ))}
+                            </ul>
+                        </TabPanel>
+                    ))}
+                </TabContext>
+            </Box>
+            {/* <main className={styles.container}>
                 <div className={styles.grid}>
                     <div></div>
                     <div className={styles.center}>
@@ -60,11 +128,10 @@ export default function Commands(props) {
                 <div className={styles.footer}>
           
                 </div>
-            </main>
+            </main> */}
         </>
     );
 }
-Commands.noLayout = true;
 
 export async function getServerSideProps(context){
     const commands = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/commands`, { cache: 'no-cache', headers: { 'Cookie': context.req.headers.cookie } })

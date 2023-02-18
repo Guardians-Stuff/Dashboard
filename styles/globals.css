@@ -9,13 +9,12 @@ html, body {
     overflow-x: hidden;
     height: 100%;
     min-height: 100%;
-    /* background-color: black; */
 }
 
 #__next {
     height: 100%;
     position: absolute;
-    width: 100%;
+    width: 100vw;
 }
 
 a {
@@ -52,33 +51,4 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.nav {
-	width: 100%;
-	height: fit-content;
-	position: fixed;
-	z-index: 1;
-}
-
-.navView {
-	background-color: rgba(31, 31, 31, 0.75);
-	/* margin: 1.5rem 10rem; */
-	padding: 1rem 2rem;
-}
-
-.actions {
-	display: flex;
-	list-style: none;
-	align-items: center;
-	flex-direction: row;
-}
-
-.action {
-  margin-right: 15px;
-}
-
-.action:hover {
-	color: rgb(155, 126, 196);
-	cursor: pointer;
 }

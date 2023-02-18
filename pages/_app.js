@@ -4,7 +4,8 @@ import { useMediaQuery } from '@mui/material';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import Layout from '@/components/Layout';
+import HomeLayout from '@/components/HomeLayout';
+import DashboardLayout from '@/components/DashboardLayout';
 import CssBaseline from '@mui/material/CssBaseline';
 import '@/styles/globals.css';
 import '@fontsource/roboto/300.css';
@@ -12,29 +13,10 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-const theme = createTheme({
-    palette: {
-        mode: 'dark',
-        blurple: {
-            main: '#5865F2',
-            dark: '#4f5bda',
-            contrastText: '#fff'
-        },
-        background: {
-            default: '#36393e',
-            paper: '#36393e'
-        }
-    },
-    typography: {
-        subtitle2: {
-            fontWeight: 300
-        }
-    }
-});
 
-export default function App({ Component, pageProps: { session, ...pageProps } }) {
+export default function App({ Component, pageProps: { ...pageProps } }) {
     /** @type {[Boolean, Function]} */ const [ serverSideLoading, setServerSideLoading ] = React.useState(false);
-
+    
     React.useEffect(() => {
         const start = () => setServerSideLoading(true);
         const end = () => setServerSideLoading(false);
@@ -51,39 +33,74 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
     }, []);
 
     return (
-        <SessionProvider session={session}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-
-                <PropsFetcher auth={Component.auth} noLayout={Component.noLayout} serverSideLoading={serverSideLoading}>
-                    { Component.noLayout ? <Component {...pageProps}/> :
-                        <Layout session={session}>
-                            <Component {...pageProps}/>
-                        </Layout>
-                    }
-                </PropsFetcher>
-            </ThemeProvider>
+        <SessionProvider>
+            <PropsProvider auth={Component.auth} serverSideLoading={serverSideLoading}>
+                <LayoutProvider Component={Component} pageProps={pageProps} />
+            </PropsProvider>
         </SessionProvider>
     );
 }
 
-function PropsFetcher(props){
-    /** @type {Boolean} */ const auth = props.auth;
+function PropsProvider(props){
+    const router = useRouter();
+    const dashboard = router.route.startsWith('/dashboard');
+    
+    /** @type {Boolean} */ const auth = props.auth ?? !!dashboard;
     /** @type {Boolean} */ const serverSideLoading = props.serverSideLoading;
     
-    const router = useRouter();
     const mobile = !useMediaQuery('(min-width:600px)');
     const { data: session, status } = useSession({ required: auth, onUnauthenticated: () => auth ? router.push('/') : null });
-
+    
     const children = React.Children.map(props.children, child => {
         if(React.isValidElement(child)) return React.cloneElement(child, {
             session: session,
             loading: serverSideLoading || status == 'loading',
-            mobile: mobile
+            mobile: mobile,
+            dashboard: dashboard
         });
-
-        return serverSideLoading || status == 'loading' ? <Layout loading session={session}/> : child;
+        
+        return child;
     });
-
+    
     return children;
+}
+
+function LayoutProvider(props){
+    const Component = props.Component;
+    /** @type {Boolean} */ const dashboard = props.dashboard;
+
+    const theme = createTheme({
+        palette: {
+            mode: 'dark',
+            blurple: {
+                main: '#5865F2',
+                dark: '#4f5bda',
+                contrastText: '#fff'
+            },
+            background: {
+                default: dashboard ? '#36393e' : '#000000',
+                paper: dashboard ? '#36393e' : '#000000'
+            }
+        },
+        typography: {
+            subtitle2: {
+                fontWeight: 300
+            }
+        }
+    });
+    
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            { dashboard ?
+                <DashboardLayout {...props}>
+                    <Component {...props} {...props.pageProps} />
+                </DashboardLayout>
+                :
+                <HomeLayout {...props}>
+                    <Component {...props} {...props.pageProps} />
+                </HomeLayout>
+            }
+        </ThemeProvider>
+    );
 }

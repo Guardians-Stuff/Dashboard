@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 
-export default function DashboardPage(props) {
+export default function DashboardPage() {
     return (
         <>
             <Head>
@@ -11,4 +11,3 @@ export default function DashboardPage(props) {
         </>
     );
 }
-DashboardPage.auth = true;

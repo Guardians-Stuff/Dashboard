@@ -7,5 +7,10 @@
 */
 
 export const changes = {
-  
-}
+    '18/02/2023': {
+        'Website Homepage': [
+            'Website homepage has been implemented.',
+            'Basic layout provided in a PR by @neeoll on Github'
+        ]
+    }
+};

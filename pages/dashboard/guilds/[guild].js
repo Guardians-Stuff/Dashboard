@@ -6,7 +6,6 @@ import { Avatar, Card, CardContent, Divider, Grid, Tab, Tabs, Typography } from 
 import { Box } from '@mui/system';
 import { TabContext, TabPanel } from '@mui/lab';
 
-import Layout from '@/components/Layout';
 import TicketsView from '@/components/TicketsView';
 import InfractionsView from '@/components/InfractionsView';
 
@@ -61,7 +60,7 @@ export default function GuildPage(props) {
 
     if(!guild && typeof window !== 'undefined') router.push('/dashboard');
 
-    return loading || !guild ? <Layout loading title='Overview' session={session} guild={guild}></Layout> : (
+    return !guild ? <></> : (
         <>
             <Head>
                 <title>Guardian Dashboard</title>

@@ -1,11 +1,10 @@
 import React from 'react';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import { Avatar, Divider, Grid, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Divider, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
-import Layout from '@/components/Layout';
 import Image from 'next/image';
 
 export default function UserPage(props) {
@@ -16,7 +15,7 @@ export default function UserPage(props) {
     const router = useRouter();
     if(!user && typeof window !== 'undefined') router.push('/dashboard');
 
-    return loading || !user ? <Layout loading title='Viewing Profile' session={session}></Layout> : (
+    return !user ? <></> : (
         <>
             <Head>
                 <title>Guardian Dashboard</title>
