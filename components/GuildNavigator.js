@@ -15,8 +15,9 @@ export default function GuildNavigator(props) {
 
     /** @type {Guild} */ const guild = props.guild;
 
-    /** @type {[ Boolean, Function ]} */ const [ openCollapse, setOpenCollapse ] = React.useState(router.query.guild == guild.id);
-    const handleClick = (event) =>{
+    /** @type {[ Boolean, Function ]} */ const [ openCollapse, setOpenCollapse ] = React.useState(false);
+    React.useEffect(() => setOpenCollapse(router.query.guild == guild.id), [ router.query.guild, guild.id ]);
+    const handleClick = event => {
         event.preventDefault();
         setOpenCollapse(!openCollapse);
     };
