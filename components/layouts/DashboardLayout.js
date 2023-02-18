@@ -9,8 +9,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import HomeIcon from '@mui/icons-material/Home';
 import LaunchIcon from '@mui/icons-material/Launch';
 import SearchIcon from '@mui/icons-material/Search';
-import GuildNavigator from './GuildNavigator';
-import AppBarUser from './AppBarUser';
+import GuildNavigator from '../GuildNavigator';
+import AppBarUser from '../AppBarUser';
 
 const drawerWidth = 280;
 

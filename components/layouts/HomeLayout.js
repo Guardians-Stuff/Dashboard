@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import { AppBar, MenuItem, Toolbar, Typography } from '@mui/material';
 
-import AppBarUser from './AppBarUser';
+import AppBarUser from '../AppBarUser';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',

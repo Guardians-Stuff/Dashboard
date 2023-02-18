@@ -4,8 +4,8 @@ import { useMediaQuery } from '@mui/material';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import HomeLayout from '@/components/HomeLayout';
-import DashboardLayout from '@/components/DashboardLayout';
+import HomeLayout from '@/components/layouts/HomeLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import CssBaseline from '@mui/material/CssBaseline';
 import '@/styles/globals.css';
 import '@fontsource/roboto/300.css';

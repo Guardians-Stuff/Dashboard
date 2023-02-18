@@ -6,8 +6,8 @@ import { Avatar, Card, CardContent, Divider, Grid, Tab, Tabs, Typography } from 
 import { Box } from '@mui/system';
 import { TabContext, TabPanel } from '@mui/lab';
 
-import TicketsView from '@/components/TicketsView';
-import InfractionsView from '@/components/InfractionsView';
+import TicketsView from '@/components/views/TicketsView';
+import InfractionsView from '@/components/views/InfractionsView';
 
 export default function GuildPage(props) {
     const router = useRouter();
