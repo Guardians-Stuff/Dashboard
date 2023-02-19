@@ -21,7 +21,7 @@ export default async function handler(req, res) {
             /** @type {GuildMember} */ const json = await response.json();
             cacheData.put(`/api/bot/guilds/${req.query.guild}/members/${req.query.member}`, json, 60 * 1000);
 
-            return await verifyPermissions(req, res, session, cached);
+            return await verifyPermissions(req, res, session, json);
         }).catch(() => res.status(500).send());
 }
 
@@ -29,13 +29,13 @@ export default async function handler(req, res) {
  * @param {NextApiRequest} req
  * @param {NextApiResponse} res
  * @param {import('next-auth/providers/discord').DiscordProfile} session
- * @param {Array<GuildMember>} members
+ * @param {GuildMember} member
  */
-async function verifyPermissions(req, res, session, members){
+async function verifyPermissions(req, res, session, member){
     if(session){
-        const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${req.query.guild}/`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
-        if(!guild.ok) return res.status(401).send();
+        const auth = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${req.query.guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
+        if(!auth.ok) return res.status(401).send();
     }
 
-    res.status(200).json(members);
+    res.status(200).json(member);
 }

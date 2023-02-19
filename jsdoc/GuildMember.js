@@ -8,4 +8,6 @@
  * @property {string} guildDisplayAvatarURL
  * @property {number} createdAt
  * @property {number} joinedAt
+ * @property {boolean} owner
+ * @property {boolean} administrator
  */

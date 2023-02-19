@@ -3,7 +3,7 @@
  * @property {string} id
  * @property {string} name
  * @property {string} iconURL
- * @property {string} owner
+ * @property {string | boolean} owner
  * @property {number} premiumTier
  * @property {number} premiumSubscriptionCount
  * @property {number} createdAt

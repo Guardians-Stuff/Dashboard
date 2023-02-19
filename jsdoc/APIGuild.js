@@ -1,7 +1,6 @@
 /**
  * @typedef {Object} APIGuild
  * @property {string} id guild id
- * @property {Boolean} hasBot if the guild has Guardian
  * @property {string} name guild name (2-100 characters, excluding trailing and leading whitespace)
  * @property {string?} icon icon hash
  * @property {string?} icon_hash icon hash, returned when in the template object

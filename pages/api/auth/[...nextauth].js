@@ -20,9 +20,9 @@ export const authOptions = {
         async jwt({ token, user, account, profile, isNewUser }){
             if(account) token.account = account;
             if(profile) token.profile = profile;
-
+            
             delete token.profile.image_url;
-            token.profile.displayAvatarURL = token.profile.avatar ? `https://cdn.discordapp.com/avatars/${token.profile.id}/${token.profile.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${+profile.discriminator % 5}.png`;
+            token.profile.displayAvatarURL = token.profile.avatar ? `https://cdn.discordapp.com/avatars/${token.profile.id}/${token.profile.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${+token.profile.discriminator % 5}.png`;
 
             if(Date.now() / 1000 < token.account.expires_at) return token;
 

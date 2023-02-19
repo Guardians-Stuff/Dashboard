@@ -38,8 +38,8 @@ export default async function handler(req, res) {
  */
 async function verifyPermissions(req, res, session, infractions){
     if(session){
-        const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${req.query.guild}/`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
-        if(!guild.ok) return res.status(401).json({ error: true, message: 'Unauthorized', infractions: [] });
+        const auth = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${req.query.guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
+        if(!auth.ok) return res.status(401).json({ error: true, message: 'Unauthorized', infractions: [] });
     }
 
     res.status(200).json({ error: false, message: '', infractions: infractions });

@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]';
 import cacheData from 'memory-cache';
 
 /**
@@ -6,6 +8,9 @@ import cacheData from 'memory-cache';
  * @param {NextApiResponse} res
  */
 export default async function handler(req, res) {
+    const session = await getServerSession(req, res, authOptions);
+    if(!session) return res.status(403).json({ error: true, message: 'You must be logged in to do this' });
+
     const cached = cacheData.get(`/api/users/${req.query.user}`);
     if(cached) return res.status(200).json(cached);
 

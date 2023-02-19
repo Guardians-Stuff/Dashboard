@@ -32,7 +32,10 @@ export default async function handler(req, res) {
  * @param {Guild} guild
  */
 async function verifyPermissions(req, res, session, guild){
-    if(session && (guild.owner != session.id)) return res.status(401).send();
+    if(session){
+        const auth = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${req.query.guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
+        if(!auth.ok) return res.status(401).send();
+    }
 
     res.status(200).json(guild);
 }

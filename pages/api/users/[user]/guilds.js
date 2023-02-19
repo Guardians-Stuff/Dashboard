@@ -23,21 +23,20 @@ export default async function handler(req, res) {
             return guild.guild;
         });
 
-        const userGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
-        const json = await userGuildsResponse.json();
-
-        if(!userGuildsResponse.ok) return res.status(userGuildsResponse.status).json({ error: true, message: json.message, guilds: [] });
-        /** @type {Array<string>} */ const userGuilds = json.reduce((previous, guild) => [ ...previous, guild.id ], []);
-
-        const promises = guilds
-            .filter(guild => userGuilds.includes(guild))
+        const guildPromises = guilds
             .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
                 .then(response => response.json()
                     .then(json => resolve(json))
                 )
             ));
-        /** @type {Array<Guild>} */ const fetchedGuilds = await Promise.all(promises);
+        /** @type {Array<Guild>} */ const fetchedGuilds = await Promise.all(guildPromises);
 
-        res.status(200).json({ error: false, message: '', guilds: fetchedGuilds });
+        const authorizedPromises = guilds
+            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
+                .then(response => resolve({ guild: guild, authorized: response.ok }))
+            ));
+        /** @type {Record<string, boolean>} */ const authorizedGuilds = (await Promise.all(authorizedPromises)).reduce((previous, response) => ({ ...previous, [response.guild]: response.authorized }), {});
+
+        res.status(200).json({ error: false, message: '', guilds: fetchedGuilds.filter(guild => authorizedGuilds[guild.id]) });
     });
 }

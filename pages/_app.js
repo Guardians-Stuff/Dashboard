@@ -54,7 +54,7 @@ function PropsProvider(props){
     /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
     React.useEffect(() => {
         async function fetchGuilds(){
-            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache' })
+            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache' })
                 .then(async response => await response.json())
                 .catch(() => []);
             

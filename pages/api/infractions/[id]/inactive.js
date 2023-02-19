@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     await dbConnect();
     
     await Infractions.findById(req.query.id).then(async (/** @type {import('@/schemas/Infractions').Infraction} */ infraction) => {
-        const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${infraction.guild}/`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
-        if(!guild.ok) return res.status(401).send({ error: true, message: 'Unauthorized' });
+        const auth = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${req.query.guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
+        if(!auth.ok) return res.status(401).send({ error: true, message: 'Unauthorized' });
 
         if(!infraction) return res.status(404).json({ error: true, message: 'Infraction not found' });
         if(!infraction.active) return res.status(400).json({ error: true, message: 'Infraction is not active' });
