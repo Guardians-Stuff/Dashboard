@@ -1,18 +1,32 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Image from 'next/image';
 
 import { Avatar, Divider, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import { TabContext, TabPanel } from '@mui/lab';
 
-import Image from 'next/image';
+import GuildsView from '@/components/views/GuildsView';
 
 export default function UserPage(props) {
-    /** @type {import('next-auth').Session} */ const session = props.session;
-    /** @type {Boolean} */ const loading = props.loading;
-    /** @type {User} */ const user = props.user;
-
     const router = useRouter();
+
+    /** @type {User} */ const user = props.user;
+    /** @type {[String, Function]} */ const [ tab, setTab ] = React.useState('Servers');
+
+    /** @type {[Array<Guild>, Function]} */ const [ guilds, setGuilds ] = React.useState([]);
+
+    React.useState(() => {
+        async function fetchGuilds(){
+            /** @type {Array<string>} */ const guilds = (await fetch(`/api/users/${router.query.user}/guilds`, { cache: 'no-cache' }).then(response => response.json())).guilds;
+
+            setGuilds(guilds);
+        }
+
+        if(tab == 'Servers') fetchGuilds();
+    }, [ tab ]);
+
     if(!user && typeof window !== 'undefined') router.push('/dashboard');
 
     return !user ? <></> : (
@@ -44,12 +58,18 @@ export default function UserPage(props) {
 
                     <Divider style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}></Divider>
 
-                    <Tabs value={0}>
-                        <Tab label='Servers' />
-                        <Tab label='Infractions' />
-                        <Tab label='Tickets' />
-                        <Tab label='Admin' />
-                    </Tabs>
+                    <TabContext value={tab}>
+                        <Tabs value={tab} onChange={(_, newTab) => setTab(newTab)}>
+                            <Tab label='Servers' value='Servers' />
+                            <Tab label='Infractions' value='Infractions' />
+                            <Tab label='Tickets' value='Tickets' />
+                            <Tab label='Admin' value='Admin' />
+                        </Tabs>
+
+                        <TabPanel value='Servers'>
+                            <GuildsView guilds={guilds} />
+                        </TabPanel>
+                    </TabContext>
                 </Box>
             </Box>
         </>

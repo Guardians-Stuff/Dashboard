@@ -50,13 +50,28 @@ function PropsProvider(props){
     
     const mobile = !useMediaQuery('(min-width:600px)');
     const { data: session, status } = useSession({ required: auth, onUnauthenticated: () => auth ? router.push('/') : null });
+
+    /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
+    React.useEffect(() => {
+        async function fetchGuilds(){
+            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache' })
+                .then(async response => await response.json())
+                .catch(() => []);
+            
+            setGuilds(userGuilds);
+        }
+
+        if(typeof session != 'undefined') fetchGuilds();
+    }, [ session ]);
+
     
     const children = React.Children.map(props.children, child => {
         if(React.isValidElement(child)) return React.cloneElement(child, {
             session: session,
             loading: serverSideLoading || status == 'loading',
             mobile: mobile,
-            dashboard: dashboard
+            dashboard: dashboard,
+            guilds: guilds
         });
         
         return child;

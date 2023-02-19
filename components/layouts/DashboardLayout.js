@@ -72,27 +72,12 @@ export default function DashboardLayout(props) {
     /** @type {Boolean} */ const loading = props.loading;
     /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {import('next-auth').Session} */ const session = props.session;
-    /** @type {string} */ const title = props.title;
-    /** @type {Guild} */ const guild = props.guild;
+    /** @type {Guild} */ const guilds = props.guilds;
     
     const [ drawerOpen, setDrawerOpen ] = React.useState(!mobile);
     React.useEffect(() => setDrawerOpen(!mobile), [ mobile ]);
     const [ filter, setFilter ] = React.useState('');
     
-    /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
-    React.useEffect(() => {
-        async function fetchGuilds(){
-            console.log('lemme fetch');
-            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache' })
-                .then(async response => await response.json())
-                .catch(() => []);
-            
-            setGuilds(userGuilds);
-        }
-
-        if(typeof session != 'undefined') fetchGuilds();
-    }, [ session ]);
-
     return (
         <>
             <AppBar position="fixed" open={drawerOpen && !mobile}>

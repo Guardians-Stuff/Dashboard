@@ -26,7 +26,6 @@ export const authOptions = {
 
             if(Date.now() / 1000 < token.account.expires_at) return token;
 
-
             const response = await fetch('https://discord.com/api/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({
                 client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
                 client_secret: process.env.DISCORD_CLIENT_SECRET,
