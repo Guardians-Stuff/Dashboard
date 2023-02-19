@@ -24,7 +24,7 @@ export default async function handler(req, res) {
         });
 
         const guildPromises = guilds
-            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
+            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild}`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN }` } })
                 .then(response => response.json()
                     .then(json => resolve(json))
                 )
