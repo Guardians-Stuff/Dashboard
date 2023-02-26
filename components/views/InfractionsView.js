@@ -52,8 +52,8 @@ export default function InfractionsView(props) {
     const infractionPopup = infraction => {
         setDialogInfraction({
             ...infraction,
-            fetchedUser: users.find(user => user.id == infraction.user),
-            fetchedIssuer: users.find(user => user.id == infraction.issuer)
+            fetchedUser: data.users.find(user => user.id == infraction.user),
+            fetchedIssuer: data.users.find(user => user.id == infraction.issuer)
         });
     };
     
