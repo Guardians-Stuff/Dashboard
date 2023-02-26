@@ -36,11 +36,25 @@ function PropsProvider(props){
     /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
     React.useEffect(() => {
         async function fetchGuilds(){
-            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache' })
-                .then(async response => await response.json())
-                .catch(() => []);
-            
-            setGuilds(userGuilds);
+            if(session.admin){
+                const guilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache' })
+                    .then(response => response.json()
+                        .then(guilds => guilds.map(guild => {
+                            guild.hasBot = true;
+                            guild.authorized = true;
+
+                            return guild;
+                        })))
+                    .catch(() => []);
+                    
+                setGuilds(guilds);
+            }else{
+                const guilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache' })
+                    .then(response => response.json())
+                    .catch(() => []);
+                
+                setGuilds(guilds);
+            }
         }
 
         if(typeof session != 'undefined') fetchGuilds();
