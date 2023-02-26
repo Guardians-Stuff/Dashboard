@@ -1,7 +1,7 @@
 import React from 'react';
 import Router, { useRouter } from 'next/router';
 import { useMediaQuery } from '@mui/material';
-import { SessionProvider, useSession } from 'next-auth/react';
+import { SessionProvider, signIn, useSession } from 'next-auth/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import HomeLayout from '@/components/layouts/HomeLayout';
@@ -38,14 +38,18 @@ function PropsProvider(props){
         async function fetchGuilds(){
             const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache' })
                 .then(async response => await response.json())
-                .catch(() => []);
+                .catch(() => null);
             
+            if(!userGuilds) return router.push(`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`);
             setGuilds(userGuilds);
         }
 
-        if(typeof session != 'undefined') fetchGuilds();
+        if(session){
+            console.log(session);
+            if(session.error) return router.push(`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`);
+            fetchGuilds();
+        }
     }, [ session ]);
-
     
     const children = React.Children.map(props.children, child => {
         if(React.isValidElement(child)) return React.cloneElement(child, {
