@@ -1,22 +1,51 @@
 import React from 'react';
+import Link from 'next/link';
 import Moment from 'moment';
 import ms from 'ms';
 
-import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Dialog, Divider, Snackbar, Typography } from '@mui/material';
-import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Checkbox, CircularProgress, Dialog, Divider, FormControl, FormControlLabel, Grid, InputLabel, ListItemText, MenuItem, Pagination, Select, Snackbar, Switch, TextField, Typography } from '@mui/material';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import Link from 'next/link';
 
 export default function InfractionsView(props) {
-    /** @type {Boolean} */ const mobile = props.mobile;
-    /** @type {Array<User>} */ const users = props.users;
+    /** @type {Guild} */ const guild = props.guild;
 
-    /** @type {[Array<import('@/schemas/Infractions').Infraction>, Function]} */ const [ infractions, setInfractions ] = React.useState(props.infractions);
-    React.useEffect(() => setInfractions(props.infractions), [ props.infractions ]);
     /** @type {[ import('@/schemas/Infractions').Infraction, Function ]} */ const [ dialogInfraction, setDialogInfraction ] = React.useState(null);
     const [ snackbarData, setSnackbarData ] = React.useState({ open: false, error: false, message: '' });
+    const [ data, setData ] = React.useState({
+        loading: true,
+        users: props.members,
+        infractions: [],
+        page: 1,
+        totalPages: 0
+    });
+
     
+    React.useEffect(() => {
+        async function fetchData(pagination = 1){
+            const tempUsers = [ ...data.users ];
+
+            const response = (await fetch(`/api/guilds/${guild.id}/infractions?pagination=${pagination}`, { cache: 'no-cache' }).then(response => response.json()));
+            /** @type {Array<import('@/schemas/Infractions').Infraction>} */ const infractions = response.infractions;
+
+            /** @type {Array<string>} */ const externalIDs = [ ...new Set(infractions.flatMap(entry => entry.user )) ].filter(id => !tempUsers.find(user => user.id == id));
+            /** @type {Array<GuildMember | Promise<User>>} */ const promises = externalIDs.map(id => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/users/${id}`, { cache: 'no-cache' }).then(async response => response.json()));
+            
+            tempUsers.push(...await Promise.all(promises));
+        
+            setData({
+                ...data,
+                loading: false,
+                users: tempUsers,
+                infractions: infractions,
+                totalPages: response.pagination.totalPages
+            });
+        }
+
+        setData({ ...data, loading: true });
+        fetchData(data.page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ data.page ]);
+
     /**
      * @param {import('@/schemas/Infractions').Infraction} infraction
      */
@@ -44,10 +73,10 @@ export default function InfractionsView(props) {
 
             infractionPopup(updatedInfraction);
 
-            const updatedInfractions = [ ...infractions ];
+            const updatedInfractions = [ ...data.infractions ];
             updatedInfractions[updatedInfractions.findIndex(infraction => infraction._id == updatedInfraction._id)] = updatedInfraction;
 
-            setInfractions(updatedInfractions);
+            setData({ ...data, infractions: updatedInfractions });
         }
 
         setSnackbarData({ open: true, error: json.error, message: json.message });
@@ -62,19 +91,24 @@ export default function InfractionsView(props) {
 
         if(!json.error){
             setDialogInfraction(null);
-            setInfractions(infractions.filter(i => i._id != infraction._id));
+            setData({ ...data, infractions: data.infractions.filter(i => i._id != infraction._id) });
         }
 
         setSnackbarData({ open: true, error: json.error, message: json.message });
     };
 
-    return (
+    return data.loading ?
+        <Box sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+            <CircularProgress />
+        </Box>
+        :
         <>
             <Snackbar open={snackbarData.open} autoHideDuration={3000} onClose={() => setSnackbarData({ ...snackbarData, open: false })}>
                 <Alert onClose={() => setSnackbarData({ ...snackbarData, open: false })} severity={snackbarData.error ? 'error' : 'success'} sx={{ width: '100%' }}>
                     {snackbarData.message}
                 </Alert>
             </Snackbar>
+
             <Dialog fullWidth onClose={() => setDialogInfraction(null)} open={!!dialogInfraction} transitionDuration={{ appear: 0, exit: 0, enter: 100 }}>
                 <Card>
                     <CardContent>
@@ -84,6 +118,7 @@ export default function InfractionsView(props) {
                         </Box>
 
                         <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
+
                         <table>
                             <tr>
                                 <td><Typography variant='h7' sx={{ marginRight: 1 }}>Issuer:</Typography></td>
@@ -100,7 +135,11 @@ export default function InfractionsView(props) {
                             </tr>
                             <tr>
                                 <td><Typography variant='h7'>Expires:</Typography></td>
-                                <td><Typography variant='h7'>{Moment(dialogInfraction?.expires).format('DD/MM/YYYY hh:mm:ss A')}</Typography></td>
+                                <td><Typography variant='h7'>{dialogInfraction?.expires !== null ? Moment(dialogInfraction?.expires).format('DD/MM/YYYY hh:mm:ss A') : 'Permenant'}</Typography></td>
+                            </tr>
+                            <tr>
+                                <td><Typography variant='h7'>Type:</Typography></td>
+                                <td><Typography variant='h7'>{dialogInfraction?.type?.slice(0, 1).toUpperCase() + dialogInfraction?.type?.slice(1)}</Typography></td>
                             </tr>
                             <tr>
                                 <td><Typography variant='h7'>Duration:</Typography></td>
@@ -114,136 +153,69 @@ export default function InfractionsView(props) {
                     </CardContent>
                     <CardActions>
                         <Button size="small" onClick={() => setInactive(dialogInfraction)} sx={{ display: dialogInfraction?.active ? 'block' : 'none' }}>Set Inactive</Button>
-                        <Button size="small"><Link href={`/dashboard/guilds/${dialogInfraction?.guild}/members/${dialogInfraction?.user}`}>View User</Link></Button>
-                        <Button size="small" sx={{ marginRight: 'auto' }}><Link href={`/dashboard/guilds/${dialogInfraction?.guild}/members/${dialogInfraction?.issuer}`}>View Issuer</Link></Button>
+                        <Button size="small"><Link href={`/dashboard/users/${dialogInfraction?.user}`}>View User</Link></Button>
+                        <Button size="small" sx={{ marginRight: 'auto' }}><Link href={`/dashboard/users/${dialogInfraction?.issuer}`}>View Issuer</Link></Button>
                         <Button size="small" onClick={() => deleteLog(dialogInfraction)} sx={{ color: 'tomato' }}>Delete Log</Button>
                     </CardActions>
                 </Card>
             </Dialog>
-            <Box sx={{
-                height: '90%',
-                width: '100%',
-                '& .inactive > [data-field="active"] > svg': {
-                    color: 'red'
-                },
-                '& .active > [data-field="active"] > svg': {
-                    color: 'lime'
-                }
-            }}>
-                <DataGrid
-                    rows={infractions}
-                    pageSize={15}
-                    disableSelectionOnClick
-                    onRowClick={params => infractionPopup(params.row)}
-                    getRowId={params => params._id}
-                    getRowClassName={params => params.row.active ? 'active' : 'inactive'}
-                    columns={[
-                        {
-                            field: 'actions',
-                            type: 'actions',
-                            width: 0,
-                            getActions: params => [
-                                <GridActionsCellItem
-                                    icon={<DeleteIcon color='tomato' />}
-                                    key='delete'
-                                    label='Delete'
-                                    onClick={() => deleteLog(params.row)}
-                                />
-                            ]
-                        },
-                        {
-                            field: 'active',
-                            type: 'boolean',
-                            headerName: 'Active',
-                            headerAlign: 'center',
-                            width: 55
-                        },
-                        {
-                            field: 'type',
-                            headerName: 'Type',
-                            headerAlign: 'center',
-                            width: 73,
-                            sortable: false
-                        },
-                        {
-                            field: 'user',
-                            headerName: 'User',
-                            headerAlign: 'center',
-                            minWidth: 173,
-                            flex: 1,
-                            sortable: false,
-                            renderCell: params => {
-                                const user = users.find(user => user.id == params.row.user);
 
-                                return (
-                                    <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Avatar src={user.displayAvatarURL} sx={{ marginRight: 1 }}/>
-                                        {user.username}#{user.discriminator}
-                                    </Box>
-                                );
-                            }
-                        },
-                        {
-                            field: 'issuer',
-                            headerName: 'Issuer',
-                            headerAlign: 'center',
-                            minWidth: 173,
-                            flex: 1,
-                            sortable: false,
-                            renderCell: params => {
-                                const user = users.find(user => user.id == params.row.issuer);
+            {/* TODO: FILTERING */}
+            {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 2 }}>
+                <TextField variant='standard' label='Filter ID' sx={{ width: '100%' }}></TextField>
+                <FormControl>
+                    <InputLabel id='type-label'>Filter Type</InputLabel>
+                    <Select labelId='type-label' multiline variant='standard' value='' sx={{ width: 135, marginLeft: 1 }}>
+                        {[ 'Ban', 'Kick', 'Warning', 'Timeout' ].map(type => (
+                            <MenuItem key={type} value={type}>
+                                <Checkbox checked />
+                                <ListItemText primary={type} />
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControlLabel control={<Switch defaultChecked />} label='Label' />
+            </Box> */}
 
-                                return (
-                                    <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Avatar src={user.displayAvatarURL} sx={{ marginRight: 1 }}/>
-                                        {user.username}#{user.discriminator}
+            <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
+                { data.infractions.map(infraction => {
+                    const fetchedUser = data.users.find(user => user.id == infraction.user);
+                    const fetchedIssuer = data.users.find(user => user.id == infraction.issuer);
+
+                    return (
+                        <Grid item
+                            key={infraction._id}
+                            sx={{ minWidth: '281px' }}
+                            onClick={() => infractionPopup(infraction)}
+                        >
+                            <Card>
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
+                                        <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
+                                        <Typography variant='subtitle2'>{infraction._id}</Typography>
+
+                                        <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
+
+                                        <Typography variant='h7' style={{ color: infraction.active ? 'lime' : 'tomato' }}>{infraction.active ? 'Active' : 'Inactive'}</Typography>
+                                        
+                                        <Box style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Typography variant='subtitle2' sx={{ marginRight: '3px' }}>{infraction.type.slice(0, 1).toUpperCase() + infraction.type.slice(1)} from:</Typography>
+                                            <Avatar src={fetchedIssuer.displayAvatarURL} sx={{ width: 24, height: 24, marginRight: '3px' }}></Avatar>
+                                            <Typography variant='subtitle2'>{fetchedIssuer.username}#{fetchedIssuer.discriminator}</Typography>
+                                        </Box>
                                     </Box>
-                                );
-                            }
-                        },
-                        {
-                            field: 'duration',
-                            headerName: 'Duration',
-                            headerAlign: 'center',
-                            width: 200,
-                            valueGetter: params => params.row.duration !== null ? ms(params.row.duration, { long: true }) : 'Permenant',
-                            sortComparator: (v1, v2) => ms(v1) - ms(v2)
-                        },
-                        {
-                            field: 'expires',
-                            headerName: 'Expires',
-                            headerAlign: 'center',
-                            minWidth: 180,
-                            valueGetter: params => params.row.expires !== null ? Moment(params.row.expires).format('DD/MM/YYYY hh:mm:ss A') : 'N/A',
-                            sortComparator: (v1, v2) => Moment(v1, 'DD/MM/YYYY hh:mm:ss A').valueOf() - Moment(v2, 'DD/MM/YYYY hh:mm:ss A').valueOf()
-                        },
-                        {
-                            field: 'time',
-                            headerName: 'Issued At',
-                            headerAlign: 'center',
-                            minWidth: 180,
-                            valueGetter: params => params.row.time !== null ? Moment(params.row.time).format('DD/MM/YYYY hh:mm:ss A') : 'N/A',
-                            sortComparator: (v1, v2) => Moment(v1, 'DD/MM/YYYY hh:mm:ss A').valueOf() - Moment(v2, 'DD/MM/YYYY hh:mm:ss A').valueOf()
-                        },
-                        {
-                            field: 'reason',
-                            headerName: 'Reason',
-                            flex: 2,
-                            minWidth: 500
-                        }
-                    ]}
-                    initialState={{
-                        columns: {
-                            columnVisibilityModel: {
-                                duration: !mobile,
-                                expires: !mobile,
-                                time: !mobile,
-                                reason: !mobile
-                            }
-                        }
-                    }}
-                />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    );
+                }) }
+            </Grid>
+
+            <br/><br/>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Pagination page={data.page} count={data.totalPages} onChange={(e, value) => setData({ ...data, page: value })}></Pagination>
             </Box>
-        </>
-    );
+        </>;
 }
