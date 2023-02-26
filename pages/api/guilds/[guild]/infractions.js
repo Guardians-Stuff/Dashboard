@@ -13,6 +13,16 @@ export default async function handler(req, res) {
     let pagination = req.query.pagination;
     if(isNaN(pagination) || pagination < 1) pagination = 1;
 
+    const filter = {};
+    if(req.query.id){
+        filter['$or'] = [
+            { user: { $regex: req.query.id } },
+            { issuer: { $regex: req.query.id } }
+        ];
+    }
+    if(req.query.types) filter.type = { $in: req.query.types.split(',') };
+    if(req.query.active) filter.active = true;
+
     /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
     if(!session && req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).json({
         error: true,
@@ -32,7 +42,7 @@ export default async function handler(req, res) {
     }
 
     Infractions
-        .find({ _id: { $lte: pages[pagination - 1]?._id }, guild: req.query.guild })
+        .find({ _id: { $lte: pages[pagination - 1]?._id }, guild: req.query.guild, ...filter })
         .sort({ _id: -1 })
         .limit(20)
         .lean()

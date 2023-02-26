@@ -7,6 +7,7 @@ import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Checkbox, C
 
 
 export default function InfractionsView(props) {
+    /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Guild} */ const guild = props.guild;
 
     /** @type {[ import('@/schemas/Infractions').Infraction, Function ]} */ const [ dialogInfraction, setDialogInfraction ] = React.useState(null);
@@ -18,13 +19,25 @@ export default function InfractionsView(props) {
         page: 1,
         totalPages: 0
     });
+    const [ filter, setFilter ] = React.useState({
+        id: '',
+        types: [],
+        inactive: true
+    });
 
-    
     React.useEffect(() => {
-        async function fetchData(pagination = 1){
+        async function fetchData(){
+            const url = [
+                `/api/guilds/${guild.id}/infractions`,
+                `?pagination=${data.page}`,
+                filter.id ? `&id=${filter.id}` : '',
+                filter.types.length != 0 ? `&types=${filter.types.join(',')}` : '',
+                !filter.inactive ? '&active=true' : ''
+            ].join('');
+
             const tempUsers = [ ...data.users ];
 
-            const response = (await fetch(`/api/guilds/${guild.id}/infractions?pagination=${pagination}`, { cache: 'no-cache' }).then(response => response.json()));
+            const response = (await fetch(url, { cache: 'no-cache' }).then(response => response.json()));
             /** @type {Array<import('@/schemas/Infractions').Infraction>} */ const infractions = response.infractions;
 
             /** @type {Array<string>} */ const externalIDs = [ ...new Set(infractions.flatMap(entry => entry.user )) ].filter(id => !tempUsers.find(user => user.id == id));
@@ -42,9 +55,9 @@ export default function InfractionsView(props) {
         }
 
         setData({ ...data, loading: true });
-        fetchData(data.page);
+        fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ data.page ]);
+    }, [ data.page, filter ]);
 
     /**
      * @param {import('@/schemas/Infractions').Infraction} infraction
@@ -97,11 +110,7 @@ export default function InfractionsView(props) {
         setSnackbarData({ open: true, error: json.error, message: json.message });
     };
 
-    return data.loading ?
-        <Box sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
-            <CircularProgress />
-        </Box>
-        :
+    return (
         <>
             <Snackbar open={snackbarData.open} autoHideDuration={3000} onClose={() => setSnackbarData({ ...snackbarData, open: false })}>
                 <Alert onClose={() => setSnackbarData({ ...snackbarData, open: false })} severity={snackbarData.error ? 'error' : 'success'} sx={{ width: '100%' }}>
@@ -160,56 +169,97 @@ export default function InfractionsView(props) {
                 </Card>
             </Dialog>
 
-            {/* TODO: FILTERING */}
-            {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 2 }}>
-                <TextField variant='standard' label='Filter ID' sx={{ width: '100%' }}></TextField>
-                <FormControl>
-                    <InputLabel id='type-label'>Filter Type</InputLabel>
-                    <Select labelId='type-label' multiline variant='standard' value='' sx={{ width: 135, marginLeft: 1 }}>
-                        {[ 'Ban', 'Kick', 'Warning', 'Timeout' ].map(type => (
-                            <MenuItem key={type} value={type}>
-                                <Checkbox checked />
-                                <ListItemText primary={type} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControlLabel control={<Switch defaultChecked />} label='Label' />
-            </Box> */}
-
             <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
-                { data.infractions.map(infraction => {
-                    const fetchedUser = data.users.find(user => user.id == infraction.user);
-                    const fetchedIssuer = data.users.find(user => user.id == infraction.issuer);
+                <Grid item sm={12}>
+                    { mobile ?
+                        <form style={{ width: '100%', display: 'flex', marginBottom: 2 }}>
+                            <TextField
+                                variant='standard'
+                                label='Filter ID'
+                                defaultValue={filter.id}
+                                onBlur={e => setFilter({ ...filter, id: e.target.value })}
+                                sx={{ width: '100%', marginBottom: 2 }}
+                            ></TextField>
+                        </form>
+                        : ''
+                    }
+                    <form style={{ display: 'flex', marginBottom: 2, justifyContent: 'center' }}>
+                        { !mobile ?
+                            <TextField
+                                variant='standard'
+                                label='Filter ID'
+                                defaultValue={filter.id}
+                                onBlur={e => setFilter({ ...filter, id: e.target.value })}
+                            ></TextField>
+                            : ''
+                        }
+                        <FormControl sx={{ width: '135px' }}>
+                            <InputLabel id='type-label'>Filter Type</InputLabel>
+                            <Select
+                                variant='standard'
+                                multiple
+                                value={filter.types}
+                                renderValue={types => types.map(type => type.slice(0, 1).toUpperCase() + type.slice(1)).join(', ')}
+                                labelId='type-label'
+                                onChange={e => setFilter({ ...filter, types: e.target.value })}
+                                sx={{ marginLeft: 1 }}
+                            >
+                                {[ 'ban', 'kick', 'warning', 'timeout', 'block' ].map(type => (
+                                    <MenuItem key={type} value={type}>
+                                        <Checkbox checked={filter.types.includes(type)} />
+                                        <ListItemText primary={type.slice(0, 1).toUpperCase() + type.slice(1)} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControlLabel
+                            control={<Switch checked={filter.inactive} />}
+                            label='Show Inactive'
+                            labelPlacement='top'
+                            onChange={() => setFilter({ ...filter, inactive: !filter.inactive })}
+                        />
+                    </form>
+                </Grid>
+                { data.loading ?
+                    <Grid item>
+                        <Box sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+                            <CircularProgress />
+                        </Box>
+                    </Grid>
+                    :
+                    data.infractions.map(infraction => {
+                        const fetchedUser = data.users.find(user => user.id == infraction.user);
+                        const fetchedIssuer = data.users.find(user => user.id == infraction.issuer);
+                        
+                        return (
+                            <Grid item
+                                key={infraction._id}
+                                sx={{ minWidth: '281px' }}
+                                onClick={() => infractionPopup(infraction)}
+                            >
+                                <Card>
+                                    <CardContent>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
+                                            <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
+                                            <Typography variant='subtitle2'>{infraction._id}</Typography>
 
-                    return (
-                        <Grid item
-                            key={infraction._id}
-                            sx={{ minWidth: '281px' }}
-                            onClick={() => infractionPopup(infraction)}
-                        >
-                            <Card>
-                                <CardContent>
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
-                                        <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
-                                        <Typography variant='subtitle2'>{infraction._id}</Typography>
+                                            <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
 
-                                        <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
-
-                                        <Typography variant='h7' style={{ color: infraction.active ? 'lime' : 'tomato' }}>{infraction.active ? 'Active' : 'Inactive'}</Typography>
-                                        
-                                        <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                            <Typography variant='subtitle2' sx={{ marginRight: '3px' }}>{infraction.type.slice(0, 1).toUpperCase() + infraction.type.slice(1)} from:</Typography>
-                                            <Avatar src={fetchedIssuer.displayAvatarURL} sx={{ width: 24, height: 24, marginRight: '3px' }}></Avatar>
-                                            <Typography variant='subtitle2'>{fetchedIssuer.username}#{fetchedIssuer.discriminator}</Typography>
+                                            <Typography variant='h7' style={{ color: infraction.active ? 'lime' : 'tomato' }}>{infraction.active ? 'Active' : 'Inactive'}</Typography>
+                                            
+                                            <Box style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Typography variant='subtitle2' sx={{ marginRight: '3px' }}>{infraction.type.slice(0, 1).toUpperCase() + infraction.type.slice(1)} from:</Typography>
+                                                <Avatar src={fetchedIssuer.displayAvatarURL} sx={{ width: 24, height: 24, marginRight: '3px' }}></Avatar>
+                                                <Typography variant='subtitle2'>{fetchedIssuer.username}#{fetchedIssuer.discriminator}</Typography>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    );
-                }) }
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        );
+                    })
+                }
             </Grid>
 
             <br/><br/>
@@ -217,5 +267,6 @@ export default function InfractionsView(props) {
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Pagination page={data.page} count={data.totalPages} onChange={(e, value) => setData({ ...data, page: value })}></Pagination>
             </Box>
-        </>;
+        </>
+    );
 }

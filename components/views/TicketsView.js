@@ -2,10 +2,11 @@ import React from 'react';
 import Link from 'next/link';
 import Moment from 'moment';
 
-import { Avatar, Card, CardContent, Checkbox, CircularProgress, Divider, FormControl, Grid, InputLabel, ListItemText, MenuItem, Pagination, Select, TextField, Typography } from '@mui/material';
+import { Avatar, Card, CardContent, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, Grid, InputLabel, ListItemText, MenuItem, Pagination, Select, Switch, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
 export default function TicketsView(props){
+    /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Guild} */ const guild = props.guild;
 
     const [ data, setData ] = React.useState({
@@ -15,12 +16,23 @@ export default function TicketsView(props){
         page: 1,
         totalPages: 0
     });
+    const [ filter, setFilter ] = React.useState({
+        id: '',
+        inactive: true
+    });
     
     React.useEffect(() => {
-        async function fetchData(pagination = 1){
+        async function fetchData(){
+            const url = [
+                `/api/guilds/${guild.id}/tickets`,
+                `?pagination=${data.page}`,
+                filter.id ? `&id=${filter.id}` : '',
+                !filter.inactive ? '&active=true' : ''
+            ].join('');
+
             const tempUsers = [ ...data.users ];
 
-            const response = (await fetch(`/api/guilds/${guild.id}/tickets?pagination=${pagination}`, { cache: 'no-cache' }).then(response => response.json()));
+            const response = (await fetch(url, { cache: 'no-cache' }).then(response => response.json()));
             /** @type {Array<import('@/schemas/Tickets').Ticket>} */ const tickets = response.tickets;
 
             /** @type {Array<string>} */ const externalIDs = [ ...new Set(tickets.flatMap(entry => entry.user )) ].filter(id => !tempUsers.find(user => user.id == id));
@@ -38,9 +50,9 @@ export default function TicketsView(props){
         }
 
         setData({ ...data, loading: true });
-        fetchData(data.page);
+        fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ data.page ]);
+    }, [ data.page, filter ]);
 
     return data.loading ?
         <Box sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
@@ -48,48 +60,70 @@ export default function TicketsView(props){
         </Box>
         :
         <>
-            {/* TODO: FILTERING */}
-            {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 2 }}>
-                <TextField variant='standard' label='Filter ID' sx={{ width: '100%' }}></TextField>
-                <FormControl>
-                    <InputLabel id='type-label'>Filter Type</InputLabel>
-                    <Select labelId='type-label' multiline variant='standard' value='' sx={{ width: 135, marginLeft: 1 }}>
-                        {[ 'Ban', 'Kick', 'Warning', 'Timeout' ].map(type => (
-                            <MenuItem key={type} value={type}>
-                                <Checkbox checked />
-                                <ListItemText primary={type} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Box> */}
-
             <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
-                { data.tickets.map(ticket => {
-                    const fetchedUser = data.users.find(user => user.id == ticket.user);
+                <Grid item sm={12}>
+                    { mobile ?
+                        <form style={{ width: '100%', display: 'flex', marginBottom: 2 }}>
+                            <TextField
+                                variant='standard'
+                                label='Filter ID'
+                                defaultValue={filter.id}
+                                onBlur={e => setFilter({ ...filter, id: e.target.value })}
+                                sx={{ width: '100%', marginBottom: 2 }}
+                            ></TextField>
+                        </form>
+                        : ''
+                    }
+                    <form style={{ display: 'flex', marginBottom: 2, justifyContent: 'center' }}>
+                        { !mobile ?
+                            <TextField
+                                variant='standard'
+                                label='Filter ID'
+                                defaultValue={filter.id}
+                                onBlur={e => setFilter({ ...filter, id: e.target.value })}
+                            ></TextField>
+                            : ''
+                        }
+                        <FormControlLabel
+                            control={<Switch checked={filter.inactive} />}
+                            label='Show Inactive'
+                            labelPlacement='top'
+                            onChange={() => setFilter({ ...filter, inactive: !filter.inactive })}
+                        />
+                    </form>
+                </Grid>
+                { data.loading ?
+                    <Grid item>
+                        <Box sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+                            <CircularProgress />
+                        </Box>
+                    </Grid>
+                    :
+                    data.tickets.map(ticket => {
+                        const fetchedUser = data.users.find(user => user.id == ticket.user);
 
-                    return (
-                        <Grid item key={ticket._id} sx={{ minWidth: '281px' }}>
-                            <Link href={`/dashboard/guilds/${guild.id}/tickets/${ticket._id}`}>
-                                <Card>
-                                    <CardContent>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                            <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
-                                            <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
-                                            <Typography variant='subtitle2'>{ticket._id}</Typography>
+                        return (
+                            <Grid item key={ticket._id} sx={{ minWidth: '281px' }}>
+                                <Link href={`/dashboard/guilds/${guild.id}/tickets/${ticket._id}`}>
+                                    <Card>
+                                        <CardContent>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
+                                                <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
+                                                <Typography variant='subtitle2'>{ticket._id}</Typography>
 
-                                            <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
+                                                <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
 
-                                            <Typography variant='h7' style={{ color: ticket.active ? 'lime' : 'tomato' }}>{ticket.active ? 'Active' : 'Inactive'}</Typography>
-                                            <Typography variant='subtitle2'>Created At: {Moment(ticket.time).format('DD/MM/YYYY hh:mm:ss A')}</Typography>
-                                            <Typography variant='subtitle2'>Last Message: {ticket.messages.length == 0 ? 'None' : Moment([ ...ticket.messages ].pop().time).format('DD/MM/YYYY hh:mm:ss A')}</Typography>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                        </Grid>
-                    );
-                }) }
+                                                <Typography variant='h7' style={{ color: ticket.active ? 'lime' : 'tomato' }}>{ticket.active ? 'Active' : 'Inactive'}</Typography>
+                                                <Typography variant='subtitle2'>Created At: {Moment(ticket.time).format('DD/MM/YYYY hh:mm:ss A')}</Typography>
+                                                <Typography variant='subtitle2'>Last Message: {ticket.messages.length == 0 ? 'None' : Moment([ ...ticket.messages ].pop().time).format('DD/MM/YYYY hh:mm:ss A')}</Typography>
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            </Grid>
+                        );
+                    }) }
             </Grid>
 
             <br/><br/>

@@ -13,6 +13,7 @@ import InfractionsView from '@/components/views/InfractionsView';
 export default function GuildPage(props) {
     const router = useRouter();
 
+    /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Guild} */ const guild = props.guild;
     /** @type {Array<GuildMember>} */ const members = props.members;
     
@@ -46,12 +47,11 @@ export default function GuildPage(props) {
                         </TabPanel>
 
                         <TabPanel value='infractions' className={`${styles.panel} ${tab == 'infractions' ? '' : styles.hidden}`}>
-                            <InfractionsView guild={guild} members={members} />
+                            <InfractionsView mobile={mobile} guild={guild} members={members} />
                         </TabPanel>
 
                         <TabPanel value='tickets' className={`${styles.panel} ${tab == 'tickets' ? '' : styles.hidden}`}>
-
-                            <TicketsView guild={guild} members={members} />
+                            <TicketsView mobile={mobile} guild={guild} members={members} />
                         </TabPanel>
                     </TabContext>
                 </Box>
