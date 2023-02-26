@@ -160,7 +160,7 @@ export default function DashboardLayout(props) {
                     )) : '' }
                 </List>
             </Drawer>
-            <Main className={loading ? 'loading' : ''} open={drawerOpen || mobile} style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'scroll' }}>
+            <Main className={loading ? 'loading' : ''} open={drawerOpen && !mobile} style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'scroll' }}>
                 <DrawerHeader />
                 { loading ? <LoadingCircle open={!drawerOpen && !mobile} className='loading-progress' /> : props.children }
             </Main>
