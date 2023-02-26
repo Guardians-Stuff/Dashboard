@@ -46,7 +46,7 @@ export default function HomeLayout(props) {
                 </Toolbar>
 
             </AppBar>
-            <main style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <main style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'scroll' }}>
                 <DrawerHeader />
                 {props.children}
             </main>
