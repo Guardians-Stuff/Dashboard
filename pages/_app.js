@@ -45,10 +45,10 @@ function PropsProvider(props){
         }
 
         if(session){
-            console.log(session);
             if(session.error) return router.push(`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`);
             fetchGuilds();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ session ]);
     
     const children = React.Children.map(props.children, child => {
