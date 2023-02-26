@@ -36,7 +36,7 @@ export default function GuildPage(props) {
                     <Divider style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}></Divider>
 
                     <TabContext value={tab}>
-                        <Tabs value={tab} onChange={(e, newTab) => router.push(`${guild.id}?tab=${newTab}`, undefined, { shallow: true })}>
+                        <Tabs value={tab} onChange={(_, newTab) => router.push(`${guild.id}?tab=${newTab}`, undefined, { shallow: true })}>
                             <Tab label='Overview' value='overview' />
                             <Tab label='Infractions' value='infractions' />
                             <Tab label='Tickets' value='tickets' />

@@ -1,0 +1,7 @@
+.panel {
+    height: 100%;
+}
+
+.panel.hidden{
+    display: none;
+}

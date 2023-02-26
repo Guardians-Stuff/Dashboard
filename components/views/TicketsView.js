@@ -8,10 +8,12 @@ import { Box } from '@mui/system';
 export default function TicketsView(props){
     /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Guild} */ const guild = props.guild;
+    /** @type {Array<GuildMember>} */ const members = props.members;
+    /** @type {User} */ const user = props.user;
 
     const [ data, setData ] = React.useState({
         loading: true,
-        users: props.members,
+        users: user ? [ user ] : members,
         tickets: [],
         page: 1,
         totalPages: 0
@@ -24,7 +26,9 @@ export default function TicketsView(props){
     React.useEffect(() => {
         async function fetchData(){
             const url = [
-                `/api/guilds/${guild.id}/tickets`,
+                '/api/',
+                guild ? `guilds/${guild.id}/tickets` : '',
+                user ? `users/${user.id}/tickets` : '',
                 `?pagination=${data.page}`,
                 filter.id ? `&id=${filter.id}` : '',
                 !filter.inactive ? '&active=true' : ''
@@ -62,7 +66,7 @@ export default function TicketsView(props){
         <>
             <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
                 <Grid item sm={12}>
-                    { mobile ?
+                    { mobile && !user ?
                         <form style={{ width: '100%', display: 'flex', marginBottom: 2 }}>
                             <TextField
                                 variant='standard'
@@ -75,7 +79,7 @@ export default function TicketsView(props){
                         : ''
                     }
                     <form style={{ display: 'flex', marginBottom: 2, justifyContent: 'center' }}>
-                        { !mobile ?
+                        { !mobile && !user ?
                             <TextField
                                 variant='standard'
                                 label='Filter ID'
@@ -104,7 +108,7 @@ export default function TicketsView(props){
 
                         return (
                             <Grid item key={ticket._id} sx={{ minWidth: '281px' }}>
-                                <Link href={`/dashboard/guilds/${guild.id}/tickets/${ticket._id}`}>
+                                <Link href={`/dashboard/guilds/${ticket.guild}/tickets/${ticket._id}`}>
                                     <Card>
                                         <CardContent>
                                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

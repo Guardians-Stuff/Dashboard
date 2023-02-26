@@ -7,25 +7,17 @@ import { Avatar, Divider, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { TabContext, TabPanel } from '@mui/lab';
 
+import styles from '@/styles/User.module.css';
 import GuildsView from '@/components/views/GuildsView';
+import InfractionsView from '@/components/views/InfractionsView';
+import TicketsView from '@/components/views/TicketsView';
 
 export default function UserPage(props) {
     const router = useRouter();
 
     /** @type {User} */ const user = props.user;
-    /** @type {[String, Function]} */ const [ tab, setTab ] = React.useState('Servers');
-
-    /** @type {[Array<Guild>, Function]} */ const [ guilds, setGuilds ] = React.useState([]);
-
-    React.useState(() => {
-        async function fetchGuilds(){
-            /** @type {Array<string>} */ const guilds = (await fetch(`/api/users/${router.query.user}/guilds`, { cache: 'no-cache' }).then(response => response.json())).guilds;
-
-            setGuilds(guilds);
-        }
-
-        if(tab == 'Servers') fetchGuilds();
-    }, [ tab ]);
+    /** @type {[ Number, Function ]} */ const [ tab, setTab ] = React.useState(router.query.tab || 'servers');
+    React.useEffect(() => setTab(router.query.tab || 'servers'), [ router.query.tab ]);
 
     if(!user && typeof window !== 'undefined') router.push('/dashboard');
 
@@ -59,15 +51,23 @@ export default function UserPage(props) {
                     <Divider style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}></Divider>
 
                     <TabContext value={tab}>
-                        <Tabs value={tab} onChange={(_, newTab) => setTab(newTab)}>
-                            <Tab label='Servers' value='Servers' />
-                            <Tab label='Infractions' value='Infractions' />
-                            <Tab label='Tickets' value='Tickets' />
-                            <Tab label='Admin' value='Admin' />
+                        <Tabs value={tab} onChange={(_, newTab) => router.push(`${user.id}?tab=${newTab}`, undefined, { shallow: true })}>
+                            <Tab label='Servers' value='servers' />
+                            <Tab label='Infractions' value='infractions' />
+                            <Tab label='Tickets' value='tickets' />
+                            <Tab label='Admin' value='admin' />
                         </Tabs>
 
-                        <TabPanel value='Servers'>
-                            <GuildsView guilds={guilds} />
+                        <TabPanel value='servers' className={`${styles.panel} ${tab == 'servers' ? '' : styles.hidden}`}>
+                            <GuildsView />
+                        </TabPanel>
+
+                        <TabPanel value='infractions' className={`${styles.panel} ${tab == 'infractions' ? '' : styles.hidden}`}>
+                            <InfractionsView user={user} />
+                        </TabPanel>
+
+                        <TabPanel value='tickets' className={`${styles.panel} ${tab == 'tickets' ? '' : styles.hidden}`}>
+                            <TicketsView user={user} />
                         </TabPanel>
                     </TabContext>
                 </Box>

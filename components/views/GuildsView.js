@@ -1,12 +1,24 @@
-import Moment from 'moment';
+import React from 'react';
 import Link from 'next/link';
 
-import { Avatar, Card, CardContent, Divider, Grid, Typography } from '@mui/material';
+import { Avatar, Card, CardContent, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import { useRouter } from 'next/router';
 
-export default function GuildsView(props){
-    /** @type {Array<Guild>} */ const guilds = props.guilds;
+export default function GuildsView(){
+    const router = useRouter();
 
+    /** @type {[Array<Guild>, Function]} */ const [ guilds, setGuilds ] = React.useState([]);
+
+    React.useState(() => {
+        async function fetchGuilds(){
+            /** @type {Array<string>} */ const guilds = (await fetch(`/api/users/${router.query.user}/guilds`, { cache: 'no-cache' }).then(response => response.json())).guilds;
+
+            setGuilds(guilds);
+        }
+
+        fetchGuilds();
+    }, []);
     return (
         <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
             {guilds.map(guild => {
@@ -19,12 +31,6 @@ export default function GuildsView(props){
                                         <Avatar src={guild.iconURL} sx={{ height: '64px', width: '64px' }} />
                                         <Typography variant='h7'>{guild.name}</Typography>
                                         <Typography variant='subtitle2'>{guild.id}</Typography>
-
-                                        {/* <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} /> */}
-
-                                        {/* <Typography variant='h7' style={{ color: ticket.active ? 'lime' : 'tomato' }}>{ticket.active ? 'Active' : 'Inactive'}</Typography>
-                                        <Typography variant='subtitle2'>Created At: {Moment(ticket.time).format('DD/MM/YYYY hh:mm:ss A')}</Typography>
-                                        <Typography variant='subtitle2'>Last Message: {ticket.messages.length == 0 ? 'None' : Moment([ ...ticket.messages ].pop().time).format('DD/MM/YYYY hh:mm:ss A')}</Typography> */}
                                     </Box>
                                 </CardContent>
                             </Card>

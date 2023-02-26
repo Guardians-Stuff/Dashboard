@@ -9,12 +9,14 @@ import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Checkbox, C
 export default function InfractionsView(props) {
     /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Guild} */ const guild = props.guild;
+    /** @type {Array<GuildMember>} */ const members = props.members;
+    /** @type {User} */ const user = props.user;
 
     /** @type {[ import('@/schemas/Infractions').Infraction, Function ]} */ const [ dialogInfraction, setDialogInfraction ] = React.useState(null);
     const [ snackbarData, setSnackbarData ] = React.useState({ open: false, error: false, message: '' });
     const [ data, setData ] = React.useState({
         loading: true,
-        users: props.members,
+        users: user ? [ user ] : members,
         infractions: [],
         page: 1,
         totalPages: 0
@@ -28,7 +30,9 @@ export default function InfractionsView(props) {
     React.useEffect(() => {
         async function fetchData(){
             const url = [
-                `/api/guilds/${guild.id}/infractions`,
+                '/api/',
+                guild ? `guilds/${guild.id}/infractions` : '',
+                user ? `users/${user.id}/infractions` : '',
                 `?pagination=${data.page}`,
                 filter.id ? `&id=${filter.id}` : '',
                 filter.types.length != 0 ? `&types=${filter.types.join(',')}` : '',
@@ -171,7 +175,7 @@ export default function InfractionsView(props) {
 
             <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
                 <Grid item sm={12}>
-                    { mobile ?
+                    { mobile && !user ?
                         <form style={{ width: '100%', display: 'flex', marginBottom: 2 }}>
                             <TextField
                                 variant='standard'
@@ -184,7 +188,7 @@ export default function InfractionsView(props) {
                         : ''
                     }
                     <form style={{ display: 'flex', marginBottom: 2, justifyContent: 'center' }}>
-                        { !mobile ?
+                        { !mobile && !user ?
                             <TextField
                                 variant='standard'
                                 label='Filter ID'
