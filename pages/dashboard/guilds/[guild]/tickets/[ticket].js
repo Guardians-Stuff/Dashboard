@@ -56,9 +56,9 @@ export default function TicketPage(props) {
                                     <Box className={styles.grid}>
                                         <Box className={`${styles.embedAuthor} ${styles.embedMargin}`}>
                                             <Avatar className={styles.embedAuthorIcon} src={user.displayAvatarURL}></Avatar>
-                                            <span class={styles.embedAuthorName}>{user.username}</span>
+                                            <span className={styles.embedAuthorName}>{user.username}</span>
                                         </Box>
-                                        <Box class={`${styles.embedDescription} ${styles.embedMargin}`}>{message.message}</Box>
+                                        <Box className={`${styles.embedDescription} ${styles.embedMargin}`}>{message.message}</Box>
                                     </Box>
                                 </Box>
                                 {message.images.map((image, index) => {
