@@ -23,14 +23,13 @@ export default async function handler(req, res) {
             return guild.guild;
         });
 
-        /** @type {Array<Guild>} */ const fetchedGuilds = await Promise.all(guilds
+        const guildPromises = guilds
             .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild}`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN }` } })
                 .then(response => response.json()
                     .then(json => resolve(json))
                 )
-            )));
-
-        if(session.id == req.query.user || session.admin) return res.status(200).json({ error: false, message: '', guilds: fetchedGuilds });
+            ));
+        /** @type {Array<Guild>} */ const fetchedGuilds = await Promise.all(guildPromises);
 
         const authorizedPromises = guilds
             .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })

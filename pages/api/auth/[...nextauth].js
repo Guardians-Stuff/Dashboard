@@ -13,8 +13,7 @@ export const authOptions = {
         async session({ session, token, user }){
             return {
                 account: token.account,
-                ...token.profile,
-                admin: process.env.NEXT_PUBLIC_ADMINS.split(',').includes(token.profile.id)
+                ...token.profile
             };
 
         },

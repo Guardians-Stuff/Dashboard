@@ -9,7 +9,6 @@ import { authOptions } from '../[...nextauth]';
 export default async function handler(req, res) {
     /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
     if(!session) return res.status(403).send();
-    if(session.admin) res.status(200).send({ owner: true, administrator: true });
 
     await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${req.query.guild}/members/${session.id}`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } })
         .then(async response => {

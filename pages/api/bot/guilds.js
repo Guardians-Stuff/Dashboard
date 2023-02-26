@@ -1,6 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import cacheData from 'memory-cache';
 
 /**
@@ -8,9 +6,7 @@ import cacheData from 'memory-cache';
  * @param {NextApiResponse} res
  */
 export default async function handler(req, res) {
-    /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
-
-    if(req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` && !session?.admin) return res.status(403).send();
+    if(req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).send();
 
     /** @type {Array<Guild>} */ const cached = cacheData.get('/api/bot/guilds');
     if(cached) return res.status(200).json(cached);
