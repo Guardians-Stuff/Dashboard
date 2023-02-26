@@ -15,8 +15,6 @@ export default function TicketsView(props){
         page: 1,
         totalPages: 0
     });
-
-    console.log(data);
     
     React.useEffect(() => {
         async function fetchData(pagination = 1){
