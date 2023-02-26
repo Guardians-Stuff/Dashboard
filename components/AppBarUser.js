@@ -3,6 +3,8 @@ import Link from 'next/link';
 
 import { Avatar, Divider, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 
+import TextAvatar from './TextAvatar';
+
 export default function AppBarUser(props){
     /** @type {import("next-auth").Session} */ const session = props.session;
     /** @type {Boolean} */ const mobile = props.mobile;
@@ -14,8 +16,7 @@ export default function AppBarUser(props){
         <>
             <IconButton onClick={e => setAnchorElUser(e.currentTarget)} style={{ p: 0, borderRadius: '50px' }}>
                 { session ? <>
-                    <Avatar src={session.displayAvatarURL} style={{ marginRight: '5px' }} />
-                    <Typography style={{ display: mobile ? 'none' : 'block' }}>{session.username}#{session.discriminator}</Typography>
+                    <TextAvatar variant='inline' src={`${session.displayAvatarURL}?size=40`} size='40px'>{ !mobile ? `${session.username}#${session.discriminator}` : ''}</TextAvatar>
                 </> : <>
                     <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`}>
                         <Typography>Login</Typography>

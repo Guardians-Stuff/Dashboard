@@ -7,6 +7,7 @@ import { Box } from '@mui/system';
 import { TabContext, TabPanel } from '@mui/lab';
 
 import styles from '@/styles/Guild.module.css';
+import TextAvatar from '@/components/TextAvatar';
 import TicketsView from '@/components/views/TicketsView';
 import InfractionsView from '@/components/views/InfractionsView';
 
@@ -30,8 +31,7 @@ export default function GuildPage(props) {
             </Head>
             <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
                 <Box style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flexGrow: 1 }}>
-                    <Avatar src={`${guild.iconURL}?size=128`} sx={{ width: 128, height: 128, fontSize: '40px' }}>{guild.name.slice(0, 1)}</Avatar>
-                    <Typography variant="h3">{guild.name}</Typography>
+                    <TextAvatar variant='column' src={`${guild.iconURL}?size=128`} alt={guild.name.slice(0, 1)} typography='h3'>{guild.name}</TextAvatar>
 
                     <Divider style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}></Divider>
 

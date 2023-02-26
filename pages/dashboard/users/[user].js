@@ -8,6 +8,7 @@ import { Box } from '@mui/system';
 import { TabContext, TabPanel } from '@mui/lab';
 
 import styles from '@/styles/User.module.css';
+import TextAvatar from '@/components/TextAvatar';
 import GuildsView from '@/components/views/GuildsView';
 import InfractionsView from '@/components/views/InfractionsView';
 import TicketsView from '@/components/views/TicketsView';
@@ -29,8 +30,7 @@ export default function UserPage(props) {
             </Head>
             <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
                 <Box style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%' }}>
-                    <Avatar src={`${user.displayAvatarURL}?size=128`} sx={{ width: 128, height: 128 }} />
-                    <Typography variant="h3">{user.username}#{user.discriminator}</Typography>
+                    <TextAvatar variant='column' src={`${user.displayAvatarURL}?size=128`} typography='h3'>{user.username}#{user.discriminator}</TextAvatar>
 
                     {/* TODO:// figure out server & nitro */}
                     <Box display='flex'>

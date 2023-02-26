@@ -1,9 +1,11 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { Avatar, Card, CardContent, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { useRouter } from 'next/router';
+
+import TextAvatar from '../TextAvatar';
 
 export default function GuildsView(){
     const router = useRouter();
@@ -28,8 +30,7 @@ export default function GuildsView(){
                             <Card>
                                 <CardContent>
                                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <Avatar src={guild.iconURL} sx={{ height: '64px', width: '64px' }} />
-                                        <Typography variant='h7'>{guild.name}</Typography>
+                                        <TextAvatar variant='column' src={`${guild.iconURL}?size=64`} alt={guild.name.slice(0, 1)} typography='h7' size='64px'>{guild.name}</TextAvatar>
                                         <Typography variant='subtitle2'>{guild.id}</Typography>
                                     </Box>
                                 </CardContent>

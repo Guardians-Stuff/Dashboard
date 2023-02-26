@@ -5,6 +5,8 @@ import Moment from 'moment';
 import { Avatar, Card, CardContent, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, Grid, InputLabel, ListItemText, MenuItem, Pagination, Select, Switch, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 
+import TextAvatar from '../TextAvatar';
+
 export default function TicketsView(props){
     /** @type {Boolean} */ const mobile = props.mobile;
     /** @type {Guild} */ const guild = props.guild;
@@ -112,8 +114,7 @@ export default function TicketsView(props){
                                     <Card>
                                         <CardContent>
                                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
-                                                <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
+                                                <TextAvatar variant='column' src={`${fetchedUser.displayAvatarURL}?size=64`} typography='h7' size='64px'>{fetchedUser.username}#{fetchedUser.discriminator}</TextAvatar>
                                                 <Typography variant='subtitle2'>{ticket._id}</Typography>
 
                                                 <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />

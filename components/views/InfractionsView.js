@@ -5,6 +5,7 @@ import ms from 'ms';
 
 import { Alert, Avatar, Box, Button, Card, CardActions, CardContent, Checkbox, CircularProgress, Dialog, Divider, FormControl, FormControlLabel, Grid, InputLabel, ListItemText, MenuItem, Pagination, Select, Snackbar, Switch, TextField, Typography } from '@mui/material';
 
+import TextAvatar from '../TextAvatar';
 
 export default function InfractionsView(props) {
     /** @type {Boolean} */ const mobile = props.mobile;
@@ -126,8 +127,7 @@ export default function InfractionsView(props) {
                 <Card>
                     <CardContent>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Avatar src={dialogInfraction?.fetchedUser?.displayAvatarURL} />
-                            <Typography variant='h7'>{dialogInfraction?.fetchedUser?.username}#{dialogInfraction?.fetchedUser?.discriminator}</Typography>
+                            <TextAvatar variant='column' src={`${dialogInfraction?.fetchedUser?.displayAvatarURL}?size=40`} typography='h7' size='40px'>{dialogInfraction?.fetchedUser?.username}#{dialogInfraction?.fetchedUser?.discriminator}</TextAvatar>
                         </Box>
 
                         <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
@@ -137,8 +137,7 @@ export default function InfractionsView(props) {
                                 <td><Typography variant='h7' sx={{ marginRight: 1 }}>Issuer:</Typography></td>
                                 <td>
                                     <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Avatar src={dialogInfraction?.fetchedIssuer?.displayAvatarURL} sx={{ width: 24, height: 24, marginRight: 1 }}></Avatar>
-                                        <Typography variant='h7'>{dialogInfraction?.fetchedIssuer?.username}#{dialogInfraction?.fetchedIssuer?.discriminator}</Typography>
+                                        <TextAvatar variant='inline' src={`${dialogInfraction?.fetchedIssuer?.displayAvatarURL}?size=24`} typography='h7' size='24px'>{dialogInfraction?.fetchedIssuer?.username}#{dialogInfraction?.fetchedIssuer?.discriminator}</TextAvatar>
                                     </Box>
                                 </td>
                             </tr>
@@ -244,8 +243,7 @@ export default function InfractionsView(props) {
                                 <Card>
                                     <CardContent>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                            <Avatar src={fetchedUser.displayAvatarURL} sx={{ height: '64px', width: '64px' }} />
-                                            <Typography variant='h7'>{fetchedUser.username}#{fetchedUser.discriminator}</Typography>
+                                            <TextAvatar variant='column' src={`${fetchedUser.displayAvatarURL}?size=64`} typography='h7' size='64px'>{fetchedUser.username}#{fetchedUser.discriminator}</TextAvatar>
                                             <Typography variant='subtitle2'>{infraction._id}</Typography>
 
                                             <Divider sx={{ width: '100%', margin: '10px 0 10px 0' }} />
@@ -254,8 +252,7 @@ export default function InfractionsView(props) {
                                             
                                             <Box style={{ display: 'flex', alignItems: 'center' }}>
                                                 <Typography variant='subtitle2' sx={{ marginRight: '3px' }}>{infraction.type.slice(0, 1).toUpperCase() + infraction.type.slice(1)} from:</Typography>
-                                                <Avatar src={fetchedIssuer.displayAvatarURL} sx={{ width: 24, height: 24, marginRight: '3px' }}></Avatar>
-                                                <Typography variant='subtitle2'>{fetchedIssuer.username}#{fetchedIssuer.discriminator}</Typography>
+                                                <TextAvatar variant='inline' src={`${fetchedUser.displayAvatarURL}?size=24`} typography='subtitle2' size='24px' margin='3px'>{fetchedUser.username}#{fetchedUser.discriminator}</TextAvatar>
                                             </Box>
                                         </Box>
                                     </CardContent>
