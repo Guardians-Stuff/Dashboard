@@ -15,26 +15,9 @@ import '@fontsource/roboto/700.css';
 
 
 export default function App({ Component, pageProps: { ...pageProps } }) {
-    /** @type {[Boolean, Function]} */ const [ serverSideLoading, setServerSideLoading ] = React.useState(false);
-    
-    React.useEffect(() => {
-        const start = () => setServerSideLoading(true);
-        const end = () => setServerSideLoading(false);
-
-        Router.events.on('routeChangeStart', start);
-        Router.events.on('routeChangeComplete', end);
-        Router.events.on('routeChangeError', end);
-        
-        return () => {
-            Router.events.off('routeChangeStart', start);
-            Router.events.off('routeChangeComplete', end);
-            Router.events.off('routeChangeError', end);
-        };
-    }, []);
-
     return (
         <SessionProvider>
-            <PropsProvider auth={Component.auth} serverSideLoading={serverSideLoading}>
+            <PropsProvider auth={Component.auth}>
                 <LayoutProvider Component={Component} pageProps={pageProps} />
             </PropsProvider>
         </SessionProvider>
@@ -46,7 +29,6 @@ function PropsProvider(props){
     const dashboard = router.route.startsWith('/dashboard');
     
     /** @type {Boolean} */ const auth = props.auth ?? !!dashboard;
-    /** @type {Boolean} */ const serverSideLoading = props.serverSideLoading;
     
     const mobile = !useMediaQuery('(min-width:600px)');
     const { data: session, status } = useSession({ required: auth, onUnauthenticated: () => auth ? router.push('/') : null });
@@ -68,7 +50,7 @@ function PropsProvider(props){
     const children = React.Children.map(props.children, child => {
         if(React.isValidElement(child)) return React.cloneElement(child, {
             session: session,
-            loading: serverSideLoading || status == 'loading',
+            loading: status == 'loading',
             mobile: mobile,
             dashboard: dashboard,
             guilds: guilds
