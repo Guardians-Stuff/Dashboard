@@ -15,7 +15,8 @@ export default async function handler(req, res) {
 
     await dbConnect();
 
-    Guilds.find({ members: { $in: [ req.query.user ] } }, { guild: 1 }).then(async (/** @type {Array<import('@/schemas/Guilds').Guild>} */ results) => {
+    try {
+        const results = await Guilds.find({ members: { $in: [ req.query.user ] } }, { guild: 1 });
         /** @type {Array<string>} */ const guilds = results.map(result => {
             /** @type {import('@/schemas/Guilds').Guild} */ const guild = result.toObject();
             guild._id = result._id.toString();
@@ -27,16 +28,22 @@ export default async function handler(req, res) {
             .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild}`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN }` } })
                 .then(response => response.json()
                     .then(json => resolve(json))
+                    .catch(() => resolve(null))
                 )
+                .catch(() => resolve(null))
             ));
-        /** @type {Array<Guild>} */ const fetchedGuilds = await Promise.all(guildPromises);
+        /** @type {Array<Guild>} */ const fetchedGuilds = (await Promise.all(guildPromises)).filter(guild => guild !== null);
 
         const authorizedPromises = guilds
             .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
                 .then(response => resolve({ guild: guild, authorized: response.ok }))
+                .catch(() => resolve({ guild: guild, authorized: false }))
             ));
         /** @type {Record<string, boolean>} */ const authorizedGuilds = (await Promise.all(authorizedPromises)).reduce((previous, response) => ({ ...previous, [response.guild]: response.authorized }), {});
 
-        res.status(200).json({ error: false, message: '', guilds: fetchedGuilds.filter(guild => authorizedGuilds[guild.id]) });
-    });
+        return res.status(200).json({ error: false, message: '', guilds: fetchedGuilds.filter(guild => authorizedGuilds[guild.id]) });
+    } catch(error) {
+        console.error('Error in /api/users/[user]/guilds:', error);
+        return res.status(500).json({ error: true, message: 'Something went wrong', guilds: [] });
+    }
 }

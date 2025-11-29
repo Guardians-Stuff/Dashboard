@@ -17,6 +17,6 @@ export default async function handler(req, res) {
             /** @type {GuildMember} */ const json = await response.json();
 
             if(!json.owner && !json.administrator) return res.status(401).send();
-            res.status(200).send({ owner: json.owner, administrator: json.administrator });
+            res.status(200).json({ owner: json.owner, administrator: json.administrator });
         }).catch(() => res.status(500).send());
 }

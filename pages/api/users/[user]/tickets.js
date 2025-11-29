@@ -26,9 +26,16 @@ export default async function handler(req, res) {
 
     await dbConnect();
 
-    /** @type {Array<Guild>} */ const guilds = (await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/users/${req.query.user}/guilds`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
-        .then(response => response.json())
-    ).guilds;
+    let guilds = [];
+    try {
+        const guildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/users/${req.query.user}/guilds`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
+        if(guildsResponse.ok) {
+            const guildsData = await guildsResponse.json();
+            guilds = guildsData.guilds || [];
+        }
+    } catch(error) {
+        console.error('Error fetching guilds:', error);
+    }
 
     const ids = await Tickets.find({}, '_id').sort({ _id: -1 }).lean();
     const pages = [];
