@@ -12,15 +12,24 @@ export default function GuildsView(){
 
     /** @type {[Array<Guild>, Function]} */ const [ guilds, setGuilds ] = React.useState([]);
 
-    React.useState(() => {
+    React.useEffect(() => {
         async function fetchGuilds(){
-            /** @type {Array<string>} */ const guilds = (await fetch(`/api/users/${router.query.user}/guilds`, { cache: 'no-cache' }).then(response => response.json())).guilds;
-
-            setGuilds(guilds);
+            try {
+                const response = await fetch(`/api/users/${router.query.user}/guilds`, { cache: 'no-cache' });
+                if(response.ok) {
+                    const data = await response.json();
+                    /** @type {Array<string>} */ const guilds = data.guilds || [];
+                    setGuilds(guilds);
+                }
+            } catch(error) {
+                console.error('Error fetching guilds:', error);
+            }
         }
 
-        fetchGuilds();
-    }, []);
+        if(router.query.user) {
+            fetchGuilds();
+        }
+    }, [router.query.user]);
     return (
         <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
             {guilds.map(guild => {

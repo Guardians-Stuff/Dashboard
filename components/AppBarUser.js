@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 import { Avatar, Divider, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 
@@ -63,11 +64,12 @@ export default function AppBarUser(props){
                         <Typography textAlign='center'>Profile</Typography>
                     </MenuItem>
                 </Link>
-                <Link href='/api/logout'>
-                    <MenuItem onClick={() => setAnchorElUser(null)}>
-                        <Typography textAlign='center' color='tomato'>Logout</Typography>
-                    </MenuItem>
-                </Link>
+                <MenuItem onClick={() => {
+                    setAnchorElUser(null);
+                    signOut({ callbackUrl: '/' });
+                }}>
+                    <Typography textAlign='center' color='tomato'>Logout</Typography>
+                </MenuItem>
             </Menu>
         </>
     );

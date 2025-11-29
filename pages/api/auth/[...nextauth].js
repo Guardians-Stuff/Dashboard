@@ -9,7 +9,25 @@ export const authOptions = {
             checks: []
         })
     ],
+    pages: {
+        signIn: '/',
+        error: '/'
+    },
     callbacks: {
+        async redirect({ url, baseUrl }) {
+            // After successful login, redirect to dashboard by default
+            // If user was trying to access a specific page, preserve that
+            if (url && url.startsWith('/')) {
+                // Relative URL - preserve it
+                return `${baseUrl}${url}`;
+            }
+            if (url && new URL(url).origin === baseUrl) {
+                // Same origin - allow it
+                return url;
+            }
+            // Default: redirect to dashboard after login
+            return `${baseUrl}/dashboard`;
+        },
         async session({ session, token, user }){
             return {
                 account: token.account,

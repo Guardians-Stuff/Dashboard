@@ -36,20 +36,43 @@ function PropsProvider(props){
     /** @type {[ Array<Guild>, Function ]} */ const [ guilds, setGuilds ] = React.useState([]);
     React.useEffect(() => {
         async function fetchGuilds(){
-            const userGuilds = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache' })
-                .then(async response => await response.json())
-                .catch(() => null);
+            // Don't redirect if we're already on an auth page to avoid loops
+            if(router.pathname.startsWith('/api/auth')) return;
             
-            if(!userGuilds) return router.push(`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`);
-            setGuilds(userGuilds);
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/guilds`, { cache: 'no-cache' });
+                
+                // Only redirect to sign in if we get 403 (unauthorized) - meaning session is invalid
+                if(response.status === 403) {
+                    return router.push('/api/auth/signin');
+                }
+                
+                if(!response.ok) {
+                    // Other errors (500, etc.) - don't redirect, just don't set guilds
+                    console.error('Failed to fetch guilds:', response.status);
+                    return;
+                }
+                
+                const userGuilds = await response.json();
+                if(userGuilds) {
+                    setGuilds(userGuilds);
+                }
+            } catch(error) {
+                // Network errors or other issues - don't redirect, just log
+                console.error('Error fetching guilds:', error);
+            }
         }
 
-        if(session){
-            if(session.error) return router.push(`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_HOST)}%2Fapi%2Fauth%2Fcallback%2Fdiscord&response_type=code&scope=identify%20guilds`);
+        if(session && status === 'authenticated'){
+            // Only check for critical authentication errors
+            if(session.error === 'RefreshAccessTokenError') {
+                // Token refresh failed, need to re-authenticate
+                return router.push('/api/auth/signin');
+            }
             fetchGuilds();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ session ]);
+    }, [ session, status ]);
     
     const children = React.Children.map(props.children, child => {
         if(React.isValidElement(child)) return React.cloneElement(child, {

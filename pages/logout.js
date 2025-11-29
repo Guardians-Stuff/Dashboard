@@ -2,15 +2,17 @@ import { signOut } from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
     
-export default function Home() {
-    React.useState(() => {
+export default function LogoutPage() {
+    React.useEffect(() => {
         signOut({ callbackUrl: '/' });
     }, []);
 
     return (
-        <Head>
-            <title>Guardian Dashboard</title>
-            <link rel="icon" href="/favicon.ico" />
-        </Head>
+        <>
+            <Head>
+                <title>Guardian Dashboard - Logging out...</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+        </>
     );
 }
