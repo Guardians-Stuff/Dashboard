@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Box, Typography, Card, CardContent, Grid } from '@mui/material';
+import { Box, Typography, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
 import TextAvatar from '@/components/TextAvatar';
 
@@ -9,9 +9,22 @@ export default function DashboardPage(props) {
     const router = useRouter();
     /** @type {Array<Guild>} */ const guilds = props.guilds || [];
     /** @type {Boolean} */ const mobile = props.mobile;
+    const [inviteDialog, setInviteDialog] = React.useState({ open: false, guild: null });
 
-    // Filter to show only authorized guilds with bot
-    const authorizedGuilds = guilds.filter(guild => guild.hasBot && guild.authorized);
+    // Filter to show only guilds where user is owner or admin
+    // ADMINISTRATOR permission is 0x8 (8 in decimal)
+    const adminGuilds = guilds.filter(guild => {
+        const isOwner = guild.owner === true;
+        if (isOwner) return true;
+        
+        // Check for ADMINISTRATOR permission (0x8)
+        if (guild.permissions) {
+            const perms = BigInt(guild.permissions);
+            const hasAdminPerm = (perms & BigInt(0x8)) === BigInt(0x8);
+            return hasAdminPerm;
+        }
+        return false;
+    });
 
     return (
         <>
@@ -49,7 +62,7 @@ export default function DashboardPage(props) {
                     Welcome to Guardian Dashboard
                 </Typography>
                 
-                {authorizedGuilds.length > 0 ? (
+                {adminGuilds.length > 0 ? (
                     <>
                         <Typography 
                             variant="h6" 
@@ -67,57 +80,94 @@ export default function DashboardPage(props) {
                         >
                             Your Servers
                         </Typography>
-                        <Grid container spacing={2} sx={{ width: '100%', maxWidth: '1200px' }}>
-                            {authorizedGuilds.map((guild, index) => (
-                                <Grid item key={guild.id} xs={12} sm={6} md={4} lg={3}>
-                                    <Card 
-                                        sx={{ 
-                                            background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.9) 0%, rgba(40, 40, 40, 0.9) 100%)',
-                                            border: '1px solid rgba(100, 100, 100, 0.3)',
-                                            borderRadius: '12px',
+                        <Box sx={{ 
+                            display: 'flex', 
+                            flexWrap: 'wrap', 
+                            gap: 3, 
+                            justifyContent: 'center',
+                            width: '100%',
+                            maxWidth: '1400px'
+                        }}>
+                            {adminGuilds.map((guild, index) => {
+                                const hasBot = guild.hasBot && guild.authorized;
+                                return (
+                                    <Box
+                                        key={guild.id}
+                                        onClick={() => {
+                                            if (hasBot) {
+                                                router.push(`/dashboard/guilds/${guild.id}`);
+                                            } else {
+                                                setInviteDialog({ open: true, guild: guild });
+                                            }
+                                        }}
+                                        sx={{
+                                            position: 'relative',
+                                            width: { xs: '80px', sm: '100px', md: '120px' },
+                                            height: { xs: '80px', sm: '100px', md: '120px' },
+                                            borderRadius: '50%',
+                                            overflow: 'hidden',
+                                            cursor: 'pointer',
                                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                             animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`,
                                             '@keyframes fadeInUp': {
-                                                from: { opacity: 0, transform: 'translateY(20px)' },
-                                                to: { opacity: 1, transform: 'translateY(0)' }
+                                                from: { opacity: 0, transform: 'translateY(20px) scale(0.8)' },
+                                                to: { opacity: 1, transform: 'translateY(0) scale(1)' }
                                             },
-                                            '&:hover': { 
-                                                transform: 'translateY(-4px) scale(1.02)',
-                                                borderColor: 'rgba(150, 150, 150, 0.5)',
-                                                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-                                                background: 'linear-gradient(135deg, rgba(40, 40, 40, 0.95) 0%, rgba(50, 50, 50, 0.95) 100%)'
+                                            '&:hover': {
+                                                transform: 'scale(1.1)',
+                                                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
+                                                zIndex: 1
                                             }
                                         }}
-                                        onClick={() => router.push(`/dashboard/guilds/${guild.id}`)}
                                     >
-                                        <CardContent>
-                                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                <TextAvatar 
-                                                    variant='column' 
-                                                    src={guild.iconURL ? `${guild.iconURL}?size=64` : null} 
-                                                    alt={guild.name.slice(0, 1)} 
-                                                    typography='h6' 
-                                                    size='64px'
-                                                >
-                                                    {guild.name}
-                                                </TextAvatar>
-                                                <Typography 
-                                                    variant='subtitle1' 
-                                                    sx={{ 
-                                                        marginTop: 1, 
+                                        <Avatar
+                                            src={guild.iconURL ? `${guild.iconURL}?size=256` : null}
+                                            alt={guild.name}
+                                            sx={{
+                                                width: '100%',
+                                                height: '100%',
+                                                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                                                bgcolor: 'rgba(50, 50, 50, 0.8)'
+                                            }}
+                                        >
+                                            {guild.name.slice(0, 1).toUpperCase()}
+                                        </Avatar>
+                                        {!hasBot && (
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                                                    }
+                                                }}
+                                            >
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        color: 'rgba(255, 255, 255, 0.9)',
+                                                        fontWeight: 600,
                                                         textAlign: 'center',
-                                                        color: 'rgba(220, 220, 220, 0.9)',
-                                                        fontWeight: 500
+                                                        px: 1
                                                     }}
                                                 >
-                                                    {guild.name}
+                                                    No Bot
                                                 </Typography>
                                             </Box>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
+                                        )}
+                                    </Box>
+                                );
+                            })}
+                        </Box>
                     </>
                 ) : (
                     <Box sx={{ 
@@ -141,11 +191,70 @@ export default function DashboardPage(props) {
                         </Typography>
                         <Typography variant="body2" sx={{ color: 'rgba(180, 180, 180, 0.7)' }}>
                             {guilds.length === 0 
-                                ? "You don't have access to any servers with the Guardian bot."
-                                : "You need to authorize access to your servers. Check the sidebar for available servers."}
+                                ? "You don't have access to any servers."
+                                : "You don't own or administrate any servers."}
                         </Typography>
                     </Box>
                 )}
+
+                {/* Invite Dialog */}
+                <Dialog
+                    open={inviteDialog.open}
+                    onClose={() => setInviteDialog({ open: false, guild: null })}
+                    PaperProps={{
+                        sx: {
+                            background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.98) 0%, rgba(40, 40, 40, 0.98) 100%)',
+                            border: '1px solid rgba(100, 100, 100, 0.3)',
+                            borderRadius: '16px',
+                            color: 'rgba(255, 255, 255, 0.9)'
+                        }
+                    }}
+                >
+                    <DialogTitle sx={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                        Invite Guardian Bot
+                    </DialogTitle>
+                    <DialogContent>
+                        <Typography sx={{ color: 'rgba(220, 220, 220, 0.9)', mb: 2 }}>
+                            {inviteDialog.guild && `The Guardian bot is not in "${inviteDialog.guild.name}". Click the button below to invite it!`}
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => setInviteDialog({ open: false, guild: null })}
+                            sx={{
+                                color: 'rgba(200, 200, 200, 0.9)',
+                                '&:hover': {
+                                    background: 'rgba(60, 60, 60, 0.3)'
+                                }
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                if (inviteDialog.guild) {
+                                    window.open(
+                                        `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot&guild_id=${inviteDialog.guild.id}`,
+                                        '_blank'
+                                    );
+                                }
+                                setInviteDialog({ open: false, guild: null });
+                            }}
+                            variant="contained"
+                            sx={{
+                                background: 'linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%)',
+                                border: '1px solid rgba(100, 100, 100, 0.3)',
+                                color: '#e0e0e0',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%)',
+                                    borderColor: 'rgba(150, 150, 150, 0.5)'
+                                }
+                            }}
+                        >
+                            Invite Bot
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </>
     );
