@@ -80,14 +80,32 @@ export default function DashboardLayout(props) {
     
     return (
         <>
-            <AppBar position="fixed" open={drawerOpen && !mobile}>
+            <AppBar 
+                position="fixed" 
+                open={drawerOpen && !mobile}
+                sx={{
+                    background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%)',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+                    borderBottom: '1px solid rgba(80, 80, 80, 0.3)',
+                }}
+            >
                 <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
                         onClick={() => setDrawerOpen(true)}
                         edge="start"
-                        sx={{ mr: 2, ...(drawerOpen && { display: 'none' }) }}>
+                        sx={{ 
+                            mr: 2, 
+                            ...(drawerOpen && { display: 'none' }),
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                                background: 'rgba(60, 60, 60, 0.3)',
+                                transform: 'scale(1.1)'
+                            }
+                        }}>
                         <MenuIcon />
                     </IconButton>
                     {/* <Typography variant="h6" noWrap component="div">{guild && !mobile ? `${guild.name} | ` : ''}{title}</Typography> */}
@@ -103,7 +121,10 @@ export default function DashboardLayout(props) {
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(25, 25, 25, 0.98) 100%)',
+                        borderRight: '1px solid rgba(80, 80, 80, 0.3)',
+                        color: 'rgba(255, 255, 255, 0.9)'
                     }
                 }}
                 anchor="left"
@@ -121,35 +142,87 @@ export default function DashboardLayout(props) {
                 <List>
                     <Link href='/dashboard'>
                         <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
+                            <ListItemButton
+                                sx={{
+                                    borderRadius: '8px',
+                                    margin: '4px 8px',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        background: 'rgba(60, 60, 60, 0.3)',
+                                        transform: 'translateX(4px)'
+                                    }
+                                }}
+                            >
+                                <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                                     <HomeIcon />
                                 </ListItemIcon>
-                                <ListItemText primary='Dashboard' />
+                                <ListItemText 
+                                    primary='Dashboard' 
+                                    primaryTypographyProps={{
+                                        sx: { color: 'rgba(255, 255, 255, 0.9)' }
+                                    }}
+                                />
                             </ListItemButton>
                         </ListItem>
                     </Link>
                     <Link href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot`}>
                         <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
+                            <ListItemButton
+                                sx={{
+                                    borderRadius: '8px',
+                                    margin: '4px 8px',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        background: 'rgba(60, 60, 60, 0.3)',
+                                        transform: 'translateX(4px)'
+                                    }
+                                }}
+                            >
+                                <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                                     <LaunchIcon></LaunchIcon>
                                 </ListItemIcon>
-                                <ListItemText primary='Invite Bot' />
+                                <ListItemText 
+                                    primary='Invite Bot' 
+                                    primaryTypographyProps={{
+                                        sx: { color: 'rgba(255, 255, 255, 0.9)' }
+                                    }}
+                                />
                             </ListItemButton>
                         </ListItem>
                     </Link>
 
-                    <Divider />
+                    <Divider sx={{ borderColor: 'rgba(100, 100, 100, 0.3)', my: 1 }} />
 
                     <ListItem disablePadding>
-                        <Box style={{ padding: '8px 16px 8px 16px', flexGrow: 1, display: 'flex', alignItems: 'flex-end' }}>
-                            <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+                        <Box sx={{ 
+                            padding: '8px 16px 8px 16px', 
+                            flexGrow: 1, 
+                            display: 'flex', 
+                            alignItems: 'flex-end' 
+                        }}>
+                            <SearchIcon sx={{ color: 'rgba(200, 200, 200, 0.7)', mr: 1, my: 0.5 }} />
                             <TextField
                                 error={guilds.length != 0 && guilds.filter(guild => guild.name.toLowerCase().includes(filter)).length == 0}
                                 variant='standard'
                                 label='Filter servers...'
-                                style={{ width: '100%' }}
+                                sx={{ 
+                                    width: '100%',
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: 'rgba(100, 100, 100, 0.3)'
+                                    },
+                                    '& .MuiInput-underline:hover:before': {
+                                        borderBottomColor: 'rgba(150, 150, 150, 0.5)'
+                                    },
+                                    '& .MuiInput-underline:after': {
+                                        borderBottomColor: 'rgba(200, 200, 200, 0.7)'
+                                    },
+                                    '& .MuiInputLabel-root': {
+                                        color: 'rgba(200, 200, 200, 0.7)'
+                                    },
+                                    '& .MuiInputBase-input': {
+                                        color: 'rgba(255, 255, 255, 0.9)'
+                                    }
+                                }}
                                 onChange={e => setFilter(e.target.value.toLowerCase())}
                             />
                         </Box>

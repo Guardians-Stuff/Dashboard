@@ -29,14 +29,77 @@ export default function GuildPage(props) {
                 <title>Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
-                <Box style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flexGrow: 1 }}>
-                    <TextAvatar variant='column' src={`${guild.iconURL}?size=128`} alt={guild.name.slice(0, 1)} typography='h3'>{guild.name}</TextAvatar>
+            <Box sx={{ 
+                display: 'flex', 
+                width: '100%', 
+                height: '100%',
+                animation: 'fadeIn 0.6s ease-out',
+                '@keyframes fadeIn': {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 }
+                }
+            }}>
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    flexDirection: 'column', 
+                    flexGrow: 1,
+                    padding: 2
+                }}>
+                    <Box sx={{
+                        animation: 'fadeInUp 0.6s ease-out',
+                        '@keyframes fadeInUp': {
+                            from: { opacity: 0, transform: 'translateY(20px)' },
+                            to: { opacity: 1, transform: 'translateY(0)' }
+                        }
+                    }}>
+                        <TextAvatar variant='column' src={`${guild.iconURL}?size=128`} alt={guild.name.slice(0, 1)} typography='h3'>{guild.name}</TextAvatar>
+                    </Box>
 
-                    <Divider style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}></Divider>
+                    <Divider sx={{ 
+                        width: '100%', 
+                        marginTop: '20px', 
+                        marginBottom: '20px',
+                        borderColor: 'rgba(100, 100, 100, 0.3)',
+                        animation: 'fadeIn 0.6s ease-out 0.2s both',
+                        '@keyframes fadeIn': {
+                            from: { opacity: 0 },
+                            to: { opacity: 1 }
+                        }
+                    }}></Divider>
 
                     <TabContext value={tab}>
-                        <Tabs value={tab} onChange={(_, newTab) => router.push(`${guild.id}?tab=${newTab}`, undefined, { shallow: true })}>
+                        <Tabs 
+                            value={tab} 
+                            onChange={(_, newTab) => router.push(`${guild.id}?tab=${newTab}`, undefined, { shallow: true })}
+                            sx={{
+                                width: '100%',
+                                mb: 2,
+                                '& .MuiTabs-indicator': {
+                                    background: 'linear-gradient(90deg, #a0a0a0 0%, #808080 100%)',
+                                    height: 3,
+                                    borderRadius: '3px 3px 0 0'
+                                },
+                                '& .MuiTab-root': {
+                                    color: 'rgba(200, 200, 200, 0.7)',
+                                    fontWeight: 500,
+                                    textTransform: 'capitalize',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        color: 'rgba(220, 220, 220, 0.9)',
+                                    },
+                                    '&.Mui-selected': {
+                                        color: '#d0d0d0',
+                                        fontWeight: 600
+                                    }
+                                },
+                                animation: 'fadeIn 0.6s ease-out 0.3s both',
+                                '@keyframes fadeIn': {
+                                    from: { opacity: 0 },
+                                    to: { opacity: 1 }
+                                }
+                            }}
+                        >
                             <Tab label='Overview' value='overview' />
                             <Tab label='Infractions' value='infractions' />
                             <Tab label='Tickets' value='tickets' />

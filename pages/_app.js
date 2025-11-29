@@ -15,6 +15,61 @@ import '@fontsource/roboto/700.css';
 
 
 export default function App({ Component, pageProps: { ...pageProps } }) {
+    React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const updateCursor = (e) => {
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorRing = document.querySelector('.custom-cursor-ring');
+            if (cursor && cursorRing) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                cursorRing.style.left = e.clientX + 'px';
+                cursorRing.style.top = e.clientY + 'px';
+            }
+        };
+
+        // Create cursor elements
+        const cursor = document.createElement('div');
+        cursor.className = 'custom-cursor';
+        cursor.style.cssText = 'position: fixed; width: 8px; height: 8px; background: #ffffff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);';
+        
+        const cursorRing = document.createElement('div');
+        cursorRing.className = 'custom-cursor-ring';
+        cursorRing.style.cssText = 'position: fixed; width: 20px; height: 20px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease-out;';
+        
+        document.body.appendChild(cursor);
+        document.body.appendChild(cursorRing);
+
+        document.addEventListener('mousemove', updateCursor);
+        
+        // Add hover effect for interactive elements
+        const handleMouseEnter = () => {
+            if (cursor) cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            if (cursorRing) cursorRing.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        };
+        const handleMouseLeave = () => {
+            if (cursor) cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            if (cursorRing) cursorRing.style.transform = 'translate(-50%, -50%) scale(1)';
+        };
+
+        const interactiveElements = document.querySelectorAll('a, button, [role="button"], input, textarea, select, [tabindex], .MuiCard-root, .MuiListItemButton-root');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', handleMouseEnter);
+            el.addEventListener('mouseleave', handleMouseLeave);
+        });
+
+        return () => {
+            document.removeEventListener('mousemove', updateCursor);
+            interactiveElements.forEach(el => {
+                el.removeEventListener('mouseenter', handleMouseEnter);
+                el.removeEventListener('mouseleave', handleMouseLeave);
+            });
+            if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+            if (cursorRing.parentNode) cursorRing.parentNode.removeChild(cursorRing);
+        };
+    }, []);
+
     return (
         <SessionProvider>
             <PropsProvider auth={Component.auth}>
@@ -102,8 +157,12 @@ function LayoutProvider(props){
                 contrastText: '#fff'
             },
             background: {
-                default: dashboard ? '#36393e' : '#000000',
-                paper: dashboard ? '#36393e' : '#000000'
+                default: dashboard ? '#1a1a1a' : '#000000',
+                paper: dashboard ? '#1e1e1e' : '#000000'
+            },
+            text: {
+                primary: dashboard ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                secondary: dashboard ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.7)'
             }
         },
         typography: {

@@ -28,12 +28,46 @@ export default function UserPage(props) {
                 <title>Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
-                <Box style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%' }}>
-                    <TextAvatar variant='column' src={`${user.displayAvatarURL}?size=128`} typography='h3'>{user.username}#{user.discriminator}</TextAvatar>
+            <Box sx={{ 
+                display: 'flex', 
+                height: '100%', 
+                width: '100%',
+                animation: 'fadeIn 0.6s ease-out',
+                '@keyframes fadeIn': {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 }
+                }
+            }}>
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    flexDirection: 'column', 
+                    width: '100%',
+                    padding: 2
+                }}>
+                    <Box sx={{
+                        animation: 'fadeInUp 0.6s ease-out',
+                        '@keyframes fadeInUp': {
+                            from: { opacity: 0, transform: 'translateY(20px)' },
+                            to: { opacity: 1, transform: 'translateY(0)' }
+                        }
+                    }}>
+                        <TextAvatar variant='column' src={`${user.displayAvatarURL}?size=128`} typography='h3'>{user.username}#{user.discriminator}</TextAvatar>
+                    </Box>
 
                     {/* TODO:// figure out server & nitro */}
-                    <Box display='flex'>
+                    <Box 
+                        display='flex' 
+                        sx={{
+                            mt: 2,
+                            gap: 1,
+                            animation: 'fadeIn 0.6s ease-out 0.2s both',
+                            '@keyframes fadeIn': {
+                                from: { opacity: 0 },
+                                to: { opacity: 1 }
+                            }
+                        }}
+                    >
                         <Image style={{ display: user.public_flags >> 0 & 1 == 1 ? 'block' : 'none' }} width={40} height={40} alt='Discord Staff' src='https://discord.id/img/flags/0.png' />
                         <Image style={{ display: user.public_flags >> 1 & 1 == 1 ? 'block' : 'none' }} width={40} height={40} alt='Discord Partner' src='https://discord.id/img/flags/1.png' />
                         <Image style={{ display: user.public_flags >> 2 & 1 == 1 ? 'block' : 'none' }} width={40} height={40} alt='Hypesquad Event' src='https://discord.id/img/flags/2.png' />
@@ -48,10 +82,50 @@ export default function UserPage(props) {
                         <Image style={{ display: user.public_flags >> 22 & 1 == 1 ? 'block' : 'none' }} width={40} height={40} alt='Active Developer' src='https://discord.id/img/flags/22.png' />
                     </Box>
 
-                    <Divider style={{ width: '100%', marginTop: '10px', marginBottom: '10px' }}></Divider>
+                    <Divider sx={{ 
+                        width: '100%', 
+                        marginTop: '20px', 
+                        marginBottom: '20px',
+                        borderColor: 'rgba(100, 100, 100, 0.3)',
+                        animation: 'fadeIn 0.6s ease-out 0.3s both',
+                        '@keyframes fadeIn': {
+                            from: { opacity: 0 },
+                            to: { opacity: 1 }
+                        }
+                    }}></Divider>
 
                     <TabContext value={tab}>
-                        <Tabs value={tab} onChange={(_, newTab) => router.push(`${user.id}?tab=${newTab}`, undefined, { shallow: true })}>
+                        <Tabs 
+                            value={tab} 
+                            onChange={(_, newTab) => router.push(`${user.id}?tab=${newTab}`, undefined, { shallow: true })}
+                            sx={{
+                                width: '100%',
+                                mb: 2,
+                                '& .MuiTabs-indicator': {
+                                    background: 'linear-gradient(90deg, #a0a0a0 0%, #808080 100%)',
+                                    height: 3,
+                                    borderRadius: '3px 3px 0 0'
+                                },
+                                '& .MuiTab-root': {
+                                    color: 'rgba(200, 200, 200, 0.7)',
+                                    fontWeight: 500,
+                                    textTransform: 'capitalize',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        color: 'rgba(220, 220, 220, 0.9)',
+                                    },
+                                    '&.Mui-selected': {
+                                        color: '#d0d0d0',
+                                        fontWeight: 600
+                                    }
+                                },
+                                animation: 'fadeIn 0.6s ease-out 0.4s both',
+                                '@keyframes fadeIn': {
+                                    from: { opacity: 0 },
+                                    to: { opacity: 1 }
+                                }
+                            }}
+                        >
                             <Tab label='Servers' value='servers' />
                             <Tab label='Infractions' value='infractions' />
                             <Tab label='Tickets' value='tickets' />
