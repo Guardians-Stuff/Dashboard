@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import HomeLayout from '@/components/layouts/HomeLayout';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
+import CheckingScreen from '@/components/CheckingScreen';
 import CssBaseline from '@mui/material/CssBaseline';
 import '@/styles/globals.css';
 import '@fontsource/roboto/300.css';
@@ -15,6 +16,24 @@ import '@fontsource/roboto/700.css';
 
 
 export default function App({ Component, pageProps: { ...pageProps } }) {
+    const [checksComplete, setChecksComplete] = React.useState(false);
+    
+    React.useEffect(() => {
+        // Check if we've already completed checks (stored in sessionStorage)
+        if (typeof window !== 'undefined') {
+            const hasChecked = sessionStorage.getItem('guardian_checks_complete');
+            if (hasChecked === 'true') {
+                setChecksComplete(true);
+            }
+        }
+    }, []);
+    
+    const handleChecksComplete = () => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('guardian_checks_complete', 'true');
+        }
+        setChecksComplete(true);
+    };
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
 
@@ -69,6 +88,15 @@ export default function App({ Component, pageProps: { ...pageProps } }) {
             if (cursorRing.parentNode) cursorRing.parentNode.removeChild(cursorRing);
         };
     }, []);
+
+    // Show checking screen first (unless it's an API route or checks are complete)
+    // Skip checking for API routes
+    const isApiRoute = typeof window !== 'undefined' && 
+        (window.location.pathname.startsWith('/api') || Router.pathname?.startsWith('/api'));
+    
+    if (!isApiRoute && !checksComplete) {
+        return <CheckingScreen onComplete={handleChecksComplete} />;
+    }
 
     return (
         <SessionProvider>

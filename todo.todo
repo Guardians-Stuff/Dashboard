@@ -11,6 +11,7 @@
             - Add a dev badge, which belongs to the bot/site devs
 
         : Site Fixes 
-            - Doesn't display servers you own or admin in.
+            - Display proper servers you own, or is admin in
+            - Everything about the profile section doesn't work
     --/
 --/

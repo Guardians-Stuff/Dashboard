@@ -16,6 +16,31 @@ export default function Home() {
             </Head>
             <Box className={styles.background}>
                 <main className={styles.container}>
+                    <MuiBox
+                        sx={{
+                            mb: 3,
+                            animation: 'fadeIn 1s ease-out 0.2s both',
+                            '@keyframes fadeIn': {
+                                from: { opacity: 0 },
+                                to: { opacity: 1 }
+                            },
+                            display: 'flex',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <img
+                            src="https://media.discordapp.net/attachments/1442949704240464015/1444607500778213446/b0fc77e52e5d00cfd644c5bbe85551d6.jpg?ex=692d5313&is=692c0193&hm=24bc85c8657a412be716f8d3412f282f3662fa1d1ac5e0ec6e95d211ffdffd47&=&format=webp&width=320&height=320"
+                            alt="Guardian Bot"
+                            style={{
+                                width: 'clamp(140px, 16vw, 160px)',
+                                height: 'clamp(140px, 16vw, 160px)',
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+                                border: '3px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                        />
+                    </MuiBox>
                     <Typography 
                         sx={{ 
                             typography: { xs: 'h2', sm: 'h1' },
