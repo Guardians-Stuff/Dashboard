@@ -5,6 +5,8 @@ import { authOptions } from '../../auth/[...nextauth]';
 import dbConnect from '@/lib/dbConnect';
 import Infractions from '@/schemas/Infractions';
 
+const logger = require('../../../lib/logger');
+
 /**
  * @param {NextApiRequest} req
  * @param {NextApiResponse} res
@@ -35,7 +37,7 @@ export default async function handler(req, res) {
             guilds = guildsData.guilds || [];
         }
     } catch(error) {
-        console.error('Error fetching guilds:', error);
+        logger.warn(`Error fetching guilds for user ${req.query.user}:`, error.message);
     }
 
     const ids = await Infractions.find({}, '_id').sort({ _id: -1 }).lean();

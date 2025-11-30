@@ -5,6 +5,8 @@ import { authOptions } from '../../auth/[...nextauth]';
 import dbConnect from '@/lib/dbConnect';
 import Guilds from '@/schemas/Guilds';
 
+const logger = require('../../../lib/logger');
+
 /**
  * @param {NextApiRequest} req
  * @param {NextApiResponse} res
@@ -41,9 +43,12 @@ export default async function handler(req, res) {
             ));
         /** @type {Record<string, boolean>} */ const authorizedGuilds = (await Promise.all(authorizedPromises)).reduce((previous, response) => ({ ...previous, [response.guild]: response.authorized }), {});
 
-        return res.status(200).json({ error: false, message: '', guilds: fetchedGuilds.filter(guild => authorizedGuilds[guild.id]) });
+        const filteredGuilds = fetchedGuilds.filter(guild => authorizedGuilds[guild.id]);
+        logger.api(`/api/users/${req.query.user}/guilds`, 200, `Fetched ${filteredGuilds.length} guilds`);
+        return res.status(200).json({ error: false, message: '', guilds: filteredGuilds });
     } catch(error) {
-        console.error('Error in /api/users/[user]/guilds:', error);
+        logger.error(`Error in /api/users/${req.query.user}/guilds:`, error.message);
+        logger.api(`/api/users/${req.query.user}/guilds`, 500, 'Internal server error');
         return res.status(500).json({ error: true, message: 'Something went wrong', guilds: [] });
     }
 }

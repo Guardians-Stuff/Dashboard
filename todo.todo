@@ -6,7 +6,11 @@
             - Moving updated background 
             - Background music
         
-        : Fixes 
+    - Profile
+        : Additions
+            - Add a dev badge, which belongs to the bot/site devs
+
+        : Site Fixes 
             - Doesn't display servers you own or admin in.
     --/
 --/

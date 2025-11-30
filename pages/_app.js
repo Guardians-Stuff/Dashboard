@@ -104,7 +104,7 @@ function PropsProvider(props){
                 
                 if(!response.ok) {
                     // Other errors (500, etc.) - don't redirect, just don't set guilds
-                    console.error('Failed to fetch guilds:', response.status);
+                    // Error is logged server-side, no need to log here
                     return;
                 }
                 
@@ -113,8 +113,8 @@ function PropsProvider(props){
                     setGuilds(userGuilds);
                 }
             } catch(error) {
-                // Network errors or other issues - don't redirect, just log
-                console.error('Error fetching guilds:', error);
+                // Network errors or other issues - don't redirect
+                // Error is logged server-side, no need to log here
             }
         }
 

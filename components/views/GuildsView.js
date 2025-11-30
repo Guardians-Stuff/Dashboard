@@ -22,7 +22,7 @@ export default function GuildsView(){
                     setGuilds(guilds);
                 }
             } catch(error) {
-                console.error('Error fetching guilds:', error);
+                // Error is logged server-side, no need to log here
             }
         }
 

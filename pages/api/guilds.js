@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
 import cacheData from 'memory-cache';
 
+const logger = require('../../lib/logger');
+
 /**
  * @param {NextApiRequest} req
  * @param {NextApiResponse} res
@@ -42,9 +44,11 @@ export default async function handler(req, res) {
 
         cacheData.put(`/api/guilds-${session.id}`, userGuilds, 60 * 1000);
 
+        logger.api('/api/guilds', 200, `Fetched ${userGuilds.length} guilds`);
         return res.status(200).json(userGuilds);
     } catch(error) {
-        console.error('Error in /api/guilds:', error);
+        logger.error('Error in /api/guilds:', error.message);
+        logger.api('/api/guilds', 500, 'Internal server error');
         return res.status(500).send();
     }
 }
