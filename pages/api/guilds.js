@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
 import cacheData from 'memory-cache';
 
-const logger = require('../../lib/logger');
+const logger = require('@/lib/logger');
 
 /**
  * @param {NextApiRequest} req

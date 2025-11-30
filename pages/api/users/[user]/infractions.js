@@ -5,7 +5,7 @@ import { authOptions } from '../../auth/[...nextauth]';
 import dbConnect from '@/lib/dbConnect';
 import Infractions from '@/schemas/Infractions';
 
-const logger = require('../../../lib/logger');
+const logger = require('@/lib/logger');
 
 /**
  * @param {NextApiRequest} req
