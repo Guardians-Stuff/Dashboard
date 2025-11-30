@@ -12,5 +12,10 @@ export const changes = {
             'Website homepage has been implemented.',
             'Basic layout provided in a PR by @neeoll on Github'
         ]
+    },
+    '11/30/2025': {
+        'Website Revamp': [
+            'Color theme, cursor, icons have all been updated and changed.',
+        ]
     }
 };
