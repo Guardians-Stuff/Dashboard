@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 
 import { Box } from '@mui/system';
-import { AppBar, MenuItem, Toolbar, Typography } from '@mui/material';
+import { AppBar, IconButton, MenuItem, Toolbar, Typography } from '@mui/material';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import AppBarUser from '../AppBarUser';
 
@@ -96,7 +97,23 @@ export default function HomeLayout(props) {
 
                     <Box sx={{ flexGrow: 1 }}></Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <IconButton
+                            href="https://github.com/Guardians-Stuff"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    color: '#fff',
+                                    transform: 'translateY(-2px)',
+                                    background: 'rgba(60, 60, 60, 0.3)',
+                                }
+                            }}
+                        >
+                            <GitHubIcon />
+                        </IconButton>
                         <AppBarUser showDashboard session={session} mobile={mobile} />
                     </Box>
                 </Toolbar>
