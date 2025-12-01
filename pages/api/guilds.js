@@ -28,7 +28,23 @@ export default async function handler(req, res) {
         
         /** @type {Array<APIGuild>} */ const userGuilds = await userGuildsResponse.json();
         
-        const authorizedPromises = userGuilds
+        // Filter to only include guilds where user is owner or has admin privileges
+        const ADMINISTRATOR_PERMISSION = BigInt(0x8); // 0x8 = ADMINISTRATOR permission
+        const adminGuilds = userGuilds.filter(guild => {
+            // Check if user is owner
+            if (guild.owner === true) return true;
+            
+            // Check if user has ADMINISTRATOR permission
+            if (guild.permissions) {
+                const perms = BigInt(guild.permissions);
+                const hasAdminPerm = (perms & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION;
+                return hasAdminPerm;
+            }
+            
+            return false;
+        });
+        
+        const authorizedPromises = adminGuilds
             .filter(guild => botGuilds.includes(guild.id))
             .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild.id}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
                 .then(response => resolve({ guild: guild.id, authorized: response.ok }))
@@ -36,16 +52,16 @@ export default async function handler(req, res) {
             ));
         /** @type {Record<string, boolean>} */ const authorizedGuilds = (await Promise.all(authorizedPromises)).reduce((previous, response) => ({ ...previous, [response.guild]: response.authorized }), {});
 
-        userGuilds.map(guild => {
+        adminGuilds.map(guild => {
             guild.iconURL = guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp` : null;
             guild.hasBot = botGuilds.includes(guild.id);
             guild.authorized = !!authorizedGuilds[guild.id];
         });
 
-        cacheData.put(`/api/guilds-${session.id}`, userGuilds, 60 * 1000);
+        cacheData.put(`/api/guilds-${session.id}`, adminGuilds, 60 * 1000);
 
-        logger.api('/api/guilds', 200, `Fetched ${userGuilds.length} guilds`);
-        return res.status(200).json(userGuilds);
+        logger.api('/api/guilds', 200, `Fetched ${adminGuilds.length} admin/owner guilds`);
+        return res.status(200).json(adminGuilds);
     } catch(error) {
         logger.error('Error in /api/guilds:', error.message);
         logger.api('/api/guilds', 500, 'Internal server error');

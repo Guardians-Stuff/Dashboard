@@ -3,24 +3,23 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Box, Typography, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
-import TextAvatar from '@/components/TextAvatar';
-
 export default function DashboardPage(props) {
     const router = useRouter();
     /** @type {Array<Guild>} */ const guilds = props.guilds || [];
     /** @type {Boolean} */ const mobile = props.mobile;
     const [inviteDialog, setInviteDialog] = React.useState({ open: false, guild: null });
 
-    // Filter to show only guilds where user is owner or admin
-    // ADMINISTRATOR permission is 0x8 (8 in decimal)
+    // Guilds are already filtered server-side to only include owner/admin guilds
+    // But we'll keep this as a safety check
+    const ADMINISTRATOR_PERMISSION = BigInt(0x8);
     const adminGuilds = guilds.filter(guild => {
-        const isOwner = guild.owner === true;
-        if (isOwner) return true;
+        // Check if user is owner
+        if (guild.owner === true) return true;
         
-        // Check for ADMINISTRATOR permission (0x8)
+        // Check if user has ADMINISTRATOR permission
         if (guild.permissions) {
             const perms = BigInt(guild.permissions);
-            const hasAdminPerm = (perms & BigInt(0x8)) === BigInt(0x8);
+            const hasAdminPerm = (perms & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION;
             return hasAdminPerm;
         }
         return false;
@@ -132,6 +131,29 @@ export default function DashboardPage(props) {
                                         >
                                             {guild.name.slice(0, 1).toUpperCase()}
                                         </Avatar>
+                                        {/* Green tint overlay for guilds with bot */}
+                                        {hasBot && (
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.35) 0%, rgba(56, 142, 60, 0.35) 100%)',
+                                                    borderRadius: '50%',
+                                                    border: '3px solid rgba(76, 175, 80, 0.7)',
+                                                    boxSizing: 'border-box',
+                                                    transition: 'all 0.3s ease',
+                                                    pointerEvents: 'none',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.45) 0%, rgba(56, 142, 60, 0.45) 100%)',
+                                                        borderColor: 'rgba(76, 175, 80, 0.9)'
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                        {/* Grey tint overlay for guilds without bot */}
                                         {!hasBot && (
                                             <Box
                                                 sx={{
@@ -140,29 +162,18 @@ export default function DashboardPage(props) {
                                                     left: 0,
                                                     width: '100%',
                                                     height: '100%',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                                    background: 'linear-gradient(135deg, rgba(120, 120, 120, 0.4) 0%, rgba(100, 100, 100, 0.4) 100%)',
                                                     borderRadius: '50%',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
+                                                    border: '3px solid rgba(120, 120, 120, 0.6)',
+                                                    boxSizing: 'border-box',
                                                     transition: 'all 0.3s ease',
+                                                    pointerEvents: 'none',
                                                     '&:hover': {
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                                                        background: 'linear-gradient(135deg, rgba(120, 120, 120, 0.5) 0%, rgba(100, 100, 100, 0.5) 100%)',
+                                                        borderColor: 'rgba(120, 120, 120, 0.8)'
                                                     }
                                                 }}
-                                            >
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        color: 'rgba(255, 255, 255, 0.9)',
-                                                        fontWeight: 600,
-                                                        textAlign: 'center',
-                                                        px: 1
-                                                    }}
-                                                >
-                                                    No Bot
-                                                </Typography>
-                                            </Box>
+                                            />
                                         )}
                                     </Box>
                                 );
@@ -233,8 +244,9 @@ export default function DashboardPage(props) {
                         <Button
                             onClick={() => {
                                 if (inviteDialog.guild) {
+                                    const botClientId = '1422311269658005635';
                                     window.open(
-                                        `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&permissions=8&scope=bot&guild_id=${inviteDialog.guild.id}`,
+                                        `https://discord.com/api/oauth2/authorize?client_id=${botClientId}&permissions=8&scope=bot&guild_id=${inviteDialog.guild.id}`,
                                         '_blank'
                                     );
                                 }
