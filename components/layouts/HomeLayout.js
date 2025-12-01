@@ -7,6 +7,7 @@ import { AppBar, IconButton, MenuItem, Toolbar, Typography } from '@mui/material
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 import AppBarUser from '../AppBarUser';
+import DiscordIcon from '../icons/DiscordIcon';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -113,6 +114,22 @@ export default function HomeLayout(props) {
                             }}
                         >
                             <GitHubIcon />
+                        </IconButton>
+                        <IconButton
+                            href="https://discord.gg/m5vhwUDQvz"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    color: '#fff',
+                                    transform: 'translateY(-2px)',
+                                    background: 'rgba(60, 60, 60, 0.3)',
+                                }
+                            }}
+                        >
+                            <DiscordIcon />
                         </IconButton>
                         <AppBarUser showDashboard session={session} mobile={mobile} />
                     </Box>

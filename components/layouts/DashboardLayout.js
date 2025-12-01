@@ -12,6 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GuildNavigator from '../GuildNavigator';
 import AppBarUser from '../AppBarUser';
+import DiscordIcon from '../icons/DiscordIcon';
 
 const drawerWidth = 280;
 
@@ -209,6 +210,31 @@ export default function DashboardLayout(props) {
                                 </ListItemIcon>
                                 <ListItemText 
                                     primary='GitHub' 
+                                    primaryTypographyProps={{
+                                        sx: { color: 'rgba(255, 255, 255, 0.9)' }
+                                    }}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    </Link>
+                    <Link href="https://discord.gg/m5vhwUDQvz" target="_blank" rel="noopener noreferrer">
+                        <ListItem disablePadding>
+                            <ListItemButton
+                                sx={{
+                                    borderRadius: '8px',
+                                    margin: '4px 8px',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        background: 'rgba(60, 60, 60, 0.3)',
+                                        transform: 'translateX(4px)'
+                                    }
+                                }}
+                            >
+                                <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                    <DiscordIcon />
+                                </ListItemIcon>
+                                <ListItemText 
+                                    primary='Discord' 
                                     primaryTypographyProps={{
                                         sx: { color: 'rgba(255, 255, 255, 0.9)' }
                                     }}
