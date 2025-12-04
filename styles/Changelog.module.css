@@ -1,48 +1,129 @@
 .container {
-	height: 200vh;
+	min-height: 200vh;
 	display: flex;
-	
-	background-image: linear-gradient(rgba(0,0,0,0) 20%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 100%),
-		url('https://e1.pxfuel.com/desktop-wallpaper/230/590/desktop-wallpaper-2-lofi-anime-aesthetic-ipad-lofi-sunset-anime.jpg');
-	background-size: 100vw;
-  background-blend-mode: multiply;
 	flex-direction: column;
+	background: linear-gradient(150deg, rgba(22,25,40,0.8) 10%, rgba(44,51,77,0.95) 80%, #141324 100%), 
+		url('https://e1.pxfuel.com/desktop-wallpaper/230/590/desktop-wallpaper-2-lofi-anime-aesthetic-ipad-lofi-sunset-anime.jpg') center center / cover fixed no-repeat;
+	background-blend-mode: overlay;
+	backdrop-filter: blur(2px) brightness(0.8);
 }
 
+/* Responsive & visually impactful grid layout */
 .grid {
-	width: 100vw;
 	display: grid;
-	grid-template-columns: 1fr 8fr 1fr;
-	grid-template-areas: 'left center right';
+	width: 100vw;
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 2rem 0;
+	grid-template-columns: 1fr minmax(0, 7fr) 1fr;
+	grid-template-areas: "left center right";
+	gap: 2rem;
 }
 
 .center {
-	color: white;
-	padding: 2rem;
+	grid-area: center;
+	color: #e0e6ef;
+	padding: 2.5rem 2rem;
+	background: rgba(30,34,60,0.85);
+	border-radius: 2.5rem;
+	box-shadow: 0 14px 38px 0 rgba(20,20,80,0.22), 0 3px 6px 0 rgba(24,24,44,0.15);
+	backdrop-filter: blur(2px);
 	align-items: center;
+	display: flex;
+	flex-direction: column;
+	transition: background 0.3s, box-shadow 0.3s;
+}
+
+.center:hover {
+	background: rgba(30,38,78,0.93);
+	box-shadow: 0 18px 48px 0 rgba(20,20,120,0.25), 0 5px 10px 0 rgba(20,20,40,0.19);
 }
 
 .body {
 	position: relative;
-	padding-top: 100px;
+	padding-top: 130px;
+	padding-bottom: 60px;
+	width: 100%;
+	max-width: 900px;
+	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
+	gap: 2rem;
+	background: linear-gradient(120deg, rgba(32,50,72,0.80) 40%, rgba(50,34,64,0.75) 100%);
+	border-radius: 1.5rem;
+	box-shadow: 0 8px 24px 0 rgba(12,11,30,0.16);
 }
 
 .header {
-	margin-top: auto;
+	margin: 0;
+	padding: 2rem 0 1rem 0;
+	text-align: center;
+	font-size: 2.8rem;
+	font-weight: bold;
+	letter-spacing: 0.06em;
+	color: #ffeaa7;
+	text-shadow: 0 2px 16px rgba(255,244,200,0.16);
+	font-family: "Poppins", "Avenir", "Segoe UI", Arial, sans-serif;
 }
 
 .date {
-	margin-top: 20px;
-	border-color: rgba(255, 255, 255, 0.5);
-	border-width: 0 0 1px 0;
-	border-style: solid;
+	margin-top: 2.5rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 2px solid rgba(255,255,255,0.15);
 	margin-bottom: -1px;
+	color: #b3b7c6;
+	font-size: 1.15rem;
+	font-family: "Fira Mono", "Menlo", "Monaco", monospace;
+	text-shadow: 0 1px 3px rgba(24,24,34,0.09);
+	letter-spacing: 0.03em;
 }
 
 .footer {
-	margin-top: -100px;
-	width: 100%;
-	height: 100vh;
+	width: 100vw;
+	height: 150px;
+	background: rgba(30,30,40,0.83);
+	border-top: 2px solid rgba(97,100,120,0.08);
+	margin-top: 4rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #8d93b7;
+	font-size: 1.07rem;
+	letter-spacing: 0.03em;
+	border-radius: 0 0 2rem 2rem;
+	box-shadow: 0 -6px 24px 0 rgba(12,11,30,0.08);
+}
+
+/* Responsive enhancements */
+@media (max-width: 900px) {
+	.grid {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			"center";
+		padding: 1rem 0;
+	}
+	.center {
+		border-radius: 1.1rem;
+	}
+	.body {
+		border-radius: 1rem;
+		padding-top: 80px;
+		padding-bottom: 28px;
+	}
+}
+
+@media (max-width: 600px) {
+	.container {
+		padding: 0 0.5rem;
+	}
+	.center {
+		padding: 1.25rem 0.5rem;
+	}
+	.body {
+		padding-top: 36px;
+		padding-bottom: 18px;
+	}
+	.header {
+		font-size: 2rem;
+	}
 }
