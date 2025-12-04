@@ -2,13 +2,12 @@
     : Guadians Dashboards todo list
     -- Home Page
         : Additions
-            - Custom scroll bar
             - Moving updated background 
             - Background music
         
     - Profile
         : Additions
-            - None 
+            - Css erroring 
 
         : Site Fixes 
             - Display proper servers you own, or is admin in
