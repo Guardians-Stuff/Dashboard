@@ -448,7 +448,7 @@ export default function DashboardPage(props) {
                         <Button
                             onClick={() => {
                                 if (inviteDialog.guild) {
-                                    const botClientId = '1422311269658005635';
+                                    const botClientId = '1469385720270426358';
                                     window.open(
                                         `https://discord.com/api/oauth2/authorize?client_id=${botClientId}&permissions=8&scope=bot&guild_id=${inviteDialog.guild.id}`,
                                         '_blank'

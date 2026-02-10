@@ -93,7 +93,7 @@ export default function Home(props) {
                             }
                         }}
                     >
-                        <Link href='https://discord.com/oauth2/authorize?client_id=1422311269658005635&scope=bot&permissions=8' style={{ textDecoration: 'none' }}>
+                        <Link href='https://discord.com/oauth2/authorize?client_id=1469385720270426358&scope=bot&permissions=8' style={{ textDecoration: 'none' }}>
                             <Button 
                                 variant="contained" 
                                 startIcon={<DiscordIcon />}

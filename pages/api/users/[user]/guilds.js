@@ -19,27 +19,42 @@ export default async function handler(req, res) {
 
     try {
         const results = await Guilds.find({ members: { $in: [ req.query.user ] } }, { guild: 1 });
-        /** @type {Array<string>} */ const guilds = results.map(result => {
+        /** @type {Array<string>} */ const guildIds = results.map(result => {
             /** @type {import('@/schemas/Guilds').Guild} */ const guild = result.toObject();
             guild._id = result._id.toString();
 
             return guild.guild;
         });
 
-        const guildPromises = guilds
-            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild}`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN }` } })
-                .then(response => response.json()
-                    .then(json => resolve(json))
-                    .catch(() => resolve(null))
-                )
-                .catch(() => resolve(null))
-            ));
-        /** @type {Array<Guild>} */ const fetchedGuilds = (await Promise.all(guildPromises)).filter(guild => guild !== null);
+        // Fetch all bot guilds
+        const botGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { 
+            cache: 'no-cache', 
+            headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } 
+        });
+        
+        if(!botGuildsResponse.ok) {
+            logger.error(`Error fetching bot guilds: ${botGuildsResponse.status}`);
+            return res.status(500).json({ error: true, message: 'Failed to fetch bot guilds', guilds: [] });
+        }
 
-        const authorizedPromises = guilds
-            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
-                .then(response => resolve({ guild: guild, authorized: response.ok }))
-                .catch(() => resolve({ guild: guild, authorized: false }))
+        /** @type {Array<Guild>} */ const botGuilds = await botGuildsResponse.json();
+        
+        // Create a map of bot guilds by ID for quick lookup
+        const botGuildMap = botGuilds.reduce((map, guild) => {
+            map[guild.id] = guild;
+            return map;
+        }, {});
+
+        // Filter user's guilds to only those where the bot is present
+        const fetchedGuilds = guildIds
+            .map(guildId => botGuildMap[guildId])
+            .filter(guild => guild !== undefined);
+
+        // Check authorization for each guild
+        const authorizedPromises = fetchedGuilds
+            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild.id}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
+                .then(response => resolve({ guild: guild.id, authorized: response.ok }))
+                .catch(() => resolve({ guild: guild.id, authorized: false }))
             ));
         /** @type {Record<string, boolean>} */ const authorizedGuilds = (await Promise.all(authorizedPromises)).reduce((previous, response) => ({ ...previous, [response.guild]: response.authorized }), {});
 

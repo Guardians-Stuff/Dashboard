@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import cacheData from 'memory-cache';
 
-const BOT_APPLICATION_ID = '1422311269658005635';
+const BOT_APPLICATION_ID = '1469385720270426358';
 const DISCORD_API_BASE = 'https://discord.com/api/v10';
 
 /**

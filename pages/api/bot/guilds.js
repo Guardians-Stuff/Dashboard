@@ -1,18 +1,32 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import cacheData from 'memory-cache';
 
-const BOT_APPLICATION_ID = '1422311269658005635';
+const BOT_APPLICATION_ID = '1469385720270426358';
 const DISCORD_API_BASE = 'https://discord.com/api/v10';
+
+const logger = require('@/lib/logger');
 
 /**
  * @param {NextApiRequest} req
  * @param {NextApiResponse} res
  */
 export default async function handler(req, res) {
-    if(req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).send();
+    const receivedAuth = req.headers.authorization;
+    const expectedAuth = `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`;
+    
+    logger.api('/api/bot/guilds', 'DEBUG', `Received auth: ${receivedAuth ? 'present' : 'missing'}`);
+    logger.api('/api/bot/guilds', 'DEBUG', `Expected auth: ${expectedAuth ? 'present' : 'missing'}`);
+    
+    if(receivedAuth !== expectedAuth) {
+        logger.error(`Auth mismatch for /api/bot/guilds: received "${receivedAuth}" expected "${expectedAuth}"`);
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
 
     /** @type {Array<Guild>} */ const cached = cacheData.get('/api/bot/guilds');
-    if(cached) return res.status(200).json(cached);
+    if(cached) {
+        logger.api('/api/bot/guilds', 200, `Returned cached ${cached.length} bot guilds`);
+        return res.status(200).json(cached);
+    }
 
     try {
         // Build headers with bot token authentication
@@ -29,11 +43,15 @@ export default async function handler(req, res) {
         );
 
         if(!response.ok) {
-            console.error(`Discord API error: ${response.status} ${response.statusText}`);
-            return res.status(response.status).send();
+            const errorText = await response.text();
+            logger.error(`Discord API error: ${response.status} ${response.statusText} - ${errorText}`);
+            logger.api('/api/bot/guilds', response.status, `Discord API error: ${response.statusText}`);
+            return res.status(response.status).json({ error: `Discord API error: ${response.statusText}` });
         }
 
         /** @type {Array<Guild>} */ const botGuilds = await response.json();
+        
+        logger.api('/api/bot/guilds', 200, `Fetched ${botGuilds.length} bot guilds from Discord API`);
         
         // Transform Discord API format to expected format
         const transformedGuilds = botGuilds.map(guild => ({
@@ -49,7 +67,8 @@ export default async function handler(req, res) {
 
         res.status(200).json(transformedGuilds);
     } catch (error) {
-        console.error('Error fetching bot guilds:', error);
-        res.status(500).send();
+        logger.error('Error fetching bot guilds:', error.message);
+        logger.api('/api/bot/guilds', 500, 'Internal server error');
+        res.status(500).json({ error: error.message });
     }
 }

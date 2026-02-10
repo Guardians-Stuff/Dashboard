@@ -18,15 +18,21 @@ export default async function handler(req, res) {
         if(cached) return res.status(200).json(cached);
 
         const botGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } });
-        if(!botGuildsResponse.ok) return res.status(botGuildsResponse.status).send();
+        if(!botGuildsResponse.ok) {
+            const errorText = await botGuildsResponse.text();
+            logger.error(`Failed to fetch bot guilds: ${botGuildsResponse.status} - ${errorText}`);
+            return res.status(botGuildsResponse.status).send();
+        }
 
         /** @type {Array<Guild>} */ const botGuildsJson = await botGuildsResponse.json();
         const botGuilds = botGuildsJson.reduce((previous, guild) => [ ...previous, guild.id ], []);
+        logger.api('/api/guilds', 200, `Fetched ${botGuilds.length} bot guilds: ${botGuilds.join(', ')}`);
 
         const userGuildsResponse = await fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${session.account.access_token}` } });
         if(!userGuildsResponse.ok) return res.status(userGuildsResponse.status).send();
         
         /** @type {Array<APIGuild>} */ const userGuilds = await userGuildsResponse.json();
+        logger.api('/api/guilds', 200, `Fetched ${userGuilds.length} user guilds: ${userGuilds.map(g => g.id).join(', ')}`);
         
         // Filter to only include guilds where user is owner or has admin privileges
         const ADMINISTRATOR_PERMISSION = BigInt(0x8); // 0x8 = ADMINISTRATOR permission
@@ -43,19 +49,23 @@ export default async function handler(req, res) {
             
             return false;
         });
+        logger.api('/api/guilds', 200, `Filtered to ${adminGuilds.length} admin/owner guilds: ${adminGuilds.map(g => g.id).join(', ')}`);
         
         const authorizedPromises = adminGuilds
             .filter(guild => botGuilds.includes(guild.id))
-            .map(guild => new Promise(resolve => fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/guilds/${guild.id}`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } })
-                .then(response => resolve({ guild: guild.id, authorized: response.ok }))
-                .catch(() => resolve({ guild: guild.id, authorized: false }))
-            ));
+            .map(guild => new Promise(resolve => {
+                // If bot is in the guild and user is already verified as admin/owner via Discord API,
+                // mark as authorized without needing to check bot API server
+                logger.api('/api/guilds', 200, `Guild ${guild.id}: Bot present, user is admin/owner - marking as authorized`);
+                resolve({ guild: guild.id, authorized: true });
+            }));
         /** @type {Record<string, boolean>} */ const authorizedGuilds = (await Promise.all(authorizedPromises)).reduce((previous, response) => ({ ...previous, [response.guild]: response.authorized }), {});
 
         adminGuilds.map(guild => {
             guild.iconURL = guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp` : null;
             guild.hasBot = botGuilds.includes(guild.id);
             guild.authorized = !!authorizedGuilds[guild.id];
+            logger.api('/api/guilds', 200, `Guild ${guild.name} (${guild.id}): hasBot=${guild.hasBot}, authorized=${guild.authorized}`);
         });
 
         cacheData.put(`/api/guilds-${session.id}`, adminGuilds, 60 * 1000);

@@ -124,13 +124,32 @@ export default function GuildPage(props) {
 }
 
 export async function getServerSideProps(context){
-    const guild = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${context.params.guild}`, { cache: 'no-cache', headers: { Cookie: context.req.headers.cookie } })
-        .then(async response => await response.json())
-        .catch(() => null);
+    try {
+        // Fetch all bot guilds and find the one with matching ID
+        const allGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { 
+            cache: 'no-cache', 
+            headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } 
+        });
+        
+        if(!allGuildsResponse.ok) {
+            return { notFound: true };
+        }
 
-    const members = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild.id}/members`, { cache: 'no-cache', headers: { Cookie: context.req.headers.cookie } })
-        .then(async response => await response.json())
-        .catch(() => []);
+        const allGuilds = await allGuildsResponse.json();
+        const guild = allGuilds.find(g => g.id === context.params.guild);
 
-    return { props: { guild: guild, members: members } };
+        if(!guild) {
+            return { notFound: true };
+        }
+
+        const membersResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild.id}/members`, { 
+            cache: 'no-cache', 
+            headers: { Cookie: context.req.headers.cookie } 
+        });
+        const members = membersResponse.ok ? await membersResponse.json() : [];
+
+        return { props: { guild: guild, members: members } };
+    } catch(error) {
+        return { notFound: true };
+    }
 }
