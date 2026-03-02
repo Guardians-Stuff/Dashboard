@@ -58,7 +58,7 @@ function inferCategory(commandName) {
  * @returns {Object} Transformed command
  */
 function transformCommand(discordCommand) {
-    const subcommands = discordCommand.options 
+    const subcommands = discordCommand.options
         ? discordCommand.options
             .filter(option => option.type === 1) // Type 1 is SUB_COMMAND
             .map(transformSubcommand)
@@ -81,16 +81,18 @@ export default async function handler(req, res) {
     if(cached) return res.status(200).json(cached);
 
     try {
-        // Build headers with optional bot token authentication
+        // Check if Discord bot token is available
+        if (!process.env.DISCORD_CLIENT_TOKEN) {
+            console.error('DISCORD_CLIENT_TOKEN environment variable is not set');
+            return res.status(500).json({ error: 'Discord bot token not configured' });
+        }
+
+        // Build headers with bot token authentication
         const headers = {
+            'Authorization': `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
             'User-Agent': 'Guardian-Dashboard/1.0',
             'Accept': 'application/json'
         };
-        
-        // Add bot token if available (for authenticated requests)
-        if (process.env.DISCORD_CLIENT_TOKEN) {
-            headers['Authorization'] = `Bot ${process.env.DISCORD_CLIENT_TOKEN}`;
-        }
 
         const response = await fetch(
             `${DISCORD_API_BASE}/applications/${BOT_APPLICATION_ID}/commands`,
@@ -99,10 +101,22 @@ export default async function handler(req, res) {
 
         if(!response.ok) {
             console.error(`Discord API error: ${response.status} ${response.statusText}`);
+            if(response.status === 401) {
+                return res.status(401).json({ error: 'Invalid Discord bot token' });
+            }
+            if(response.status === 403) {
+                return res.status(403).json({ error: 'Bot lacks permissions to fetch commands' });
+            }
             return res.status(response.status).json({ error: 'Failed to fetch commands from Discord API' });
         }
 
         const discordCommands = await response.json();
+        
+        // Validate response is an array
+        if (!Array.isArray(discordCommands)) {
+            console.error('Discord API returned non-array response:', discordCommands);
+            return res.status(500).json({ error: 'Invalid response from Discord API' });
+        }
         
         // Transform Discord commands to expected format
         const commands = discordCommands.map(transformCommand);

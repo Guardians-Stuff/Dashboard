@@ -14,14 +14,31 @@ export default async function handler(req, res) {
     const cached = cacheData.get(`/api/users/${req.query.user}`);
     if(cached) return res.status(200).json(cached);
 
-    await fetch(`https://discord.com/api/users/${req.query.user}`, { headers: { 'Authorization': `Bot ${process.env.DISCORD_CLIENT_TOKEN}` } })
-        .then(async response => {
-            /** @type {User} */ const json = await response.json();
-            const icon = json.avatar ? `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${json.discriminator % 5}.png`;
-            json.displayAvatarURL = icon;
+    try {
+        const response = await fetch(`https://discord.com/api/users/${req.query.user}`, {
+            headers: {
+                'Authorization': `Bot ${process.env.DISCORD_CLIENT_TOKEN}`,
+                'User-Agent': 'Guardian-Dashboard/1.0'
+            }
+        });
 
-            cacheData.put(`/api/users/${req.query.user}`, json, 60 * 1000);
+        if(!response.ok) {
+            console.error(`Discord API error: ${response.status} ${response.statusText}`);
+            if(response.status === 404) {
+                return res.status(404).json({ error: true, message: 'User not found' });
+            }
+            return res.status(response.status).json({ error: true, message: 'Failed to fetch user from Discord API' });
+        }
 
-            res.status(response.status).json(json);
-        }).catch(() => res.status(500).send());
+        /** @type {User} */ const json = await response.json();
+        const icon = json.avatar ? `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${json.discriminator % 5}.png`;
+        json.displayAvatarURL = icon;
+
+        cacheData.put(`/api/users/${req.query.user}`, json, 60 * 1000);
+
+        res.status(200).json(json);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: true, message: 'Internal server error' });
+    }
 }

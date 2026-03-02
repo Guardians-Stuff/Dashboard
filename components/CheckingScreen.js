@@ -45,7 +45,7 @@ const CheckItem = styled(Box)({
 });
 
 const CheckIcon = styled(Box, {
-    shouldForwardProp: (prop) => prop !== 'checked',
+    shouldForwardProp: (prop) => prop !== 'checked'
 })(({ checked }) => ({
     width: '20px',
     height: '20px',
@@ -68,15 +68,15 @@ const CheckIcon = styled(Box, {
 }));
 
 export default function CheckingScreen({ onComplete }) {
-    const [checks, setChecks] = React.useState({
+    const [ checks, setChecks ] = React.useState({
         browser: false,
         network: false,
         api: false,
         security: false
     });
     
-    const [currentCheck, setCurrentCheck] = React.useState('');
-    const [progress, setProgress] = React.useState(0);
+    const [ currentCheck, setCurrentCheck ] = React.useState('');
+    const [ progress, setProgress ] = React.useState(0);
 
     React.useEffect(() => {
         const performChecks = async () => {
@@ -138,18 +138,18 @@ export default function CheckingScreen({ onComplete }) {
         };
 
         performChecks();
-    }, [onComplete]);
+    }, [ onComplete ]);
 
     return (
         <CheckingContainer>
-            <Box sx={{ 
+            <Box sx={{
                 textAlign: 'center',
                 maxWidth: '400px',
                 padding: '2rem'
             }}>
-                <Typography 
-                    variant="h4" 
-                    sx={{ 
+                <Typography
+                    variant="h4"
+                    sx={{
                         mb: 4,
                         fontWeight: 600,
                         background: 'linear-gradient(135deg, #e0e0e0 0%, #c0c0c0 50%, #a0a0a0 100%)',
@@ -162,19 +162,19 @@ export default function CheckingScreen({ onComplete }) {
                 </Typography>
                 
                 <Box sx={{ mb: 4 }}>
-                    <CircularProgress 
-                        size={60} 
+                    <CircularProgress
+                        size={60}
                         thickness={4}
-                        sx={{ 
+                        sx={{
                             color: '#5865F2',
                             mb: 3
-                        }} 
+                        }}
                     />
                 </Box>
 
-                <Typography 
-                    variant="body1" 
-                    sx={{ 
+                <Typography
+                    variant="body1"
+                    sx={{
                         mb: 3,
                         color: 'rgba(255, 255, 255, 0.8)',
                         minHeight: '24px'
@@ -184,10 +184,10 @@ export default function CheckingScreen({ onComplete }) {
                 </Typography>
 
                 <Box sx={{ width: '100%', mb: 3 }}>
-                    <LinearProgress 
-                        variant="determinate" 
-                        value={progress} 
-                        sx={{ 
+                    <LinearProgress
+                        variant="determinate"
+                        value={progress}
+                        sx={{
                             height: 6,
                             borderRadius: 3,
                             backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -229,4 +229,3 @@ export default function CheckingScreen({ onComplete }) {
         </CheckingContainer>
     );
 }
-

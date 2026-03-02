@@ -8,6 +8,7 @@ import { TabContext, TabPanel } from '@mui/lab';
 
 import styles from '@/styles/Guild.module.css';
 import TextAvatar from '@/components/TextAvatar';
+import OverviewView from '@/components/views/OverviewView';
 import TicketsView from '@/components/views/TicketsView';
 import InfractionsView from '@/components/views/InfractionsView';
 
@@ -29,9 +30,9 @@ export default function GuildPage(props) {
                 <title>Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box sx={{ 
-                display: 'flex', 
-                width: '100%', 
+            <Box sx={{
+                display: 'flex',
+                width: '100%',
                 height: '100%',
                 animation: 'fadeIn 0.6s ease-out',
                 '@keyframes fadeIn': {
@@ -39,10 +40,10 @@ export default function GuildPage(props) {
                     to: { opacity: 1 }
                 }
             }}>
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    flexDirection: 'column', 
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
                     flexGrow: 1,
                     padding: 2
                 }}>
@@ -56,9 +57,9 @@ export default function GuildPage(props) {
                         <TextAvatar variant='column' src={`${guild.iconURL}?size=128`} alt={guild.name.slice(0, 1)} typography='h3'>{guild.name}</TextAvatar>
                     </Box>
 
-                    <Divider sx={{ 
-                        width: '100%', 
-                        marginTop: '20px', 
+                    <Divider sx={{
+                        width: '100%',
+                        marginTop: '20px',
                         marginBottom: '20px',
                         borderColor: 'rgba(100, 100, 100, 0.3)',
                         animation: 'fadeIn 0.6s ease-out 0.2s both',
@@ -69,8 +70,8 @@ export default function GuildPage(props) {
                     }}></Divider>
 
                     <TabContext value={tab}>
-                        <Tabs 
-                            value={tab} 
+                        <Tabs
+                            value={tab}
                             onChange={(_, newTab) => router.push(`${guild.id}?tab=${newTab}`, undefined, { shallow: true })}
                             sx={{
                                 width: '100%',
@@ -86,7 +87,7 @@ export default function GuildPage(props) {
                                     textTransform: 'capitalize',
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        color: 'rgba(220, 220, 220, 0.9)',
+                                        color: 'rgba(220, 220, 220, 0.9)'
                                     },
                                     '&.Mui-selected': {
                                         color: '#d0d0d0',
@@ -106,7 +107,7 @@ export default function GuildPage(props) {
                         </Tabs>
 
                         <TabPanel value='overview' className={`${styles.panel} ${tab == 'overview' ? '' : styles.hidden}`}>
-                            TEST 1
+                            <OverviewView mobile={mobile} guild={guild} members={members} />
                         </TabPanel>
 
                         <TabPanel value='infractions' className={`${styles.panel} ${tab == 'infractions' ? '' : styles.hidden}`}>
@@ -125,10 +126,13 @@ export default function GuildPage(props) {
 
 export async function getServerSideProps(context){
     try {
+        // Force IPv4 to avoid connection issues
+        const baseUrl = process.env.NEXT_PUBLIC_HOST?.replace('::1', '127.0.0.1') || 'http://127.0.0.1:3000';
+        
         // Fetch all bot guilds and find the one with matching ID
-        const allGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { 
-            cache: 'no-cache', 
-            headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } 
+        const allGuildsResponse = await fetch(`${baseUrl}/api/bot/guilds`, {
+            cache: 'no-cache',
+            headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` }
         });
         
         if(!allGuildsResponse.ok) {
@@ -142,9 +146,9 @@ export async function getServerSideProps(context){
             return { notFound: true };
         }
 
-        const membersResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds/${guild.id}/members`, { 
-            cache: 'no-cache', 
-            headers: { Cookie: context.req.headers.cookie } 
+        const membersResponse = await fetch(`${baseUrl}/api/bot/guilds/${guild.id}/members`, {
+            cache: 'no-cache',
+            headers: { Cookie: context.req.headers.cookie }
         });
         const members = membersResponse.ok ? await membersResponse.json() : [];
 

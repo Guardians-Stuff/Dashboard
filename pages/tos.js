@@ -34,7 +34,7 @@ export default function TermsOfService() {
                                 sx={{
                                     color: 'rgba(255, 255, 255, 0.9)',
                                     '&:hover': {
-                                        background: 'rgba(60, 60, 60, 0.3)',
+                                        background: 'rgba(60, 60, 60, 0.3)'
                                     }
                                 }}
                             >
@@ -47,7 +47,7 @@ export default function TermsOfService() {
                                 background: 'linear-gradient(135deg, rgba(30, 30, 30, 0.9) 0%, rgba(40, 40, 40, 0.9) 100%)',
                                 backdropFilter: 'blur(10px)',
                                 border: '1px solid rgba(100, 100, 100, 0.3)',
-                                borderRadius: '16px',
+                                borderRadius: '16px'
                             }}
                         >
                             <CardContent sx={{ p: 4 }}>
@@ -113,4 +113,3 @@ export default function TermsOfService() {
         </>
     );
 }
-

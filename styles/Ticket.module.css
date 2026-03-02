@@ -21,8 +21,19 @@
     align-items: center;
     width: 68px;
     height: 68px;
-    background-color: #484B4F;
-    border-radius: 50%;
+    background: var(--bg-glass);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-backdrop);
+    box-shadow: var(--glass-shadow);
+    transition: all var(--transition-normal);
+}
+
+.emptyChannelIcon:hover {
+    background: var(--bg-glass-hover);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-glow);
+    transform: scale(1.05);
 }
 
 .messageContainer {
@@ -53,14 +64,41 @@
 }
 
 .embedWrapper {
-    border: none;
+    border: 1px solid var(--glass-border);
     margin-left: 10px;
-    border-radius: 5px 20px 20px 5px;
-    background: rgba(0,0,0,0.5);
+    border-radius: var(--radius-lg);
+    background: var(--bg-glass);
     position: relative;
     max-width: 520px;
-    color: #ffffff;
+    color: var(--text-primary);
     font-weight: 400;
+    box-shadow: var(--glass-shadow);
+    transition: all var(--transition-normal);
+    backdrop-filter: var(--glass-backdrop);
+    overflow: hidden;
+}
+
+.embedWrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-normal);
+}
+
+.embedWrapper:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-xl), var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+.embedWrapper:hover::before {
+    transform: scaleX(1);
 }
 
 .embedWrapper::after {
@@ -71,9 +109,15 @@
     left: -10px;
     width: 0px;
     border: solid;
+    border-width: 0 0 0 4px;
+    border-color: var(--primary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+}
+
+.embedWrapper:hover::after {
     border-width: 0 0 0 6px;
-    border-color: inherit;
-    border-radius: 20px;
+    border-color: var(--primary-light);
 }
 
 .grid{
@@ -102,7 +146,9 @@
 
 .embedAuthorName{
     font-size: 0.875rem;
-    font-weight: 400;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .embedDescription{
@@ -111,6 +157,19 @@
     font-weight: 400;
     white-space: pre-line;
     grid-column: 1/1;
+    color: var(--text-secondary);
+    background: var(--bg-glass);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-backdrop);
+    transition: all var(--transition-normal);
+}
+
+.embedDescription:hover {
+    color: var(--text-primary);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
 }
 
 .messageAttachment a img{

@@ -36,8 +36,8 @@ export default function Changelog() {
             </Head>
             <Box className={styles.background}>
                 <Box className={styles.changelogContainer}>
-                    <Box sx={{ 
-                        mb: 5, 
+                    <Box sx={{
+                        mb: 5,
                         textAlign: 'center',
                         animation: 'fadeInDown 0.6s ease-out',
                         '@keyframes fadeInDown': {
@@ -45,9 +45,9 @@ export default function Changelog() {
                             to: { opacity: 1, transform: 'translateY(0)' }
                         }
                     }}>
-                        <Typography 
-                            variant='h2' 
-                            sx={{ 
+                        <Typography
+                            variant='h2'
+                            sx={{
                                 mb: 1,
                                 fontWeight: 800,
                                 background: 'linear-gradient(135deg, #ffffff 0%, #b0b0b0 50%, #808080 100%)',
@@ -60,9 +60,9 @@ export default function Changelog() {
                         >
                             Changelog
                         </Typography>
-                        <Typography 
-                            variant='body1' 
-                            sx={{ 
+                        <Typography
+                            variant='body1'
+                            sx={{
                                 color: 'rgba(200, 200, 200, 0.7)',
                                 fontSize: '1rem',
                                 mt: 1
@@ -95,33 +95,33 @@ export default function Changelog() {
                                     left: 0,
                                     right: 0,
                                     height: '4px',
-                                    background: 'linear-gradient(90deg, rgba(100, 100, 100, 0.5) 0%, rgba(150, 150, 150, 0.5) 50%, rgba(100, 100, 100, 0.5) 100%)',
+                                    background: 'linear-gradient(90deg, rgba(100, 100, 100, 0.5) 0%, rgba(150, 150, 150, 0.5) 50%, rgba(100, 100, 100, 0.5) 100%)'
                                 },
                                 '&:hover': {
                                     borderColor: 'rgba(150, 150, 150, 0.4)',
                                     boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)',
                                     transform: 'translateY(-2px)',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                                 },
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                             }}
                         >
                             <CardContent sx={{ p: { xs: 2.5, sm: 3, md: 4 } }}>
-                                <Box sx={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
                                     mb: 3,
                                     pb: 2,
                                     borderBottom: '2px solid rgba(100, 100, 100, 0.2)'
                                 }}>
-                                    <CalendarToday sx={{ 
-                                        color: 'rgba(200, 200, 200, 0.8)', 
+                                    <CalendarToday sx={{
+                                        color: 'rgba(200, 200, 200, 0.8)',
                                         mr: 1.5,
                                         fontSize: '1.5rem'
                                     }} />
-                                    <Typography 
-                                        variant='h4' 
-                                        sx={{ 
+                                    <Typography
+                                        variant='h4'
+                                        sx={{
                                             fontWeight: 700,
                                             color: '#e0e0e0',
                                             fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
@@ -135,7 +135,7 @@ export default function Changelog() {
                                 {Object.keys(changes[date]).map((category, categoryIndex) => {
                                     const categoryColors = getCategoryColor(category);
                                     return (
-                                        <Box 
+                                        <Box
                                             key={`${date}-${category}`}
                                             sx={{
                                                 mb: 4,
@@ -146,19 +146,19 @@ export default function Changelog() {
                                                 }
                                             }}
                                         >
-                                            <Box sx={{ 
-                                                display: 'flex', 
-                                                alignItems: 'center', 
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
                                                 mb: 2,
                                                 gap: 1.5
                                             }}>
-                                                <Category sx={{ 
+                                                <Category sx={{
                                                     color: categoryColors.text,
                                                     fontSize: '1.25rem'
                                                 }} />
-                                                <Typography 
-                                                    variant='h5' 
-                                                    sx={{ 
+                                                <Typography
+                                                    variant='h5'
+                                                    sx={{
                                                         fontWeight: 600,
                                                         color: categoryColors.text,
                                                         fontSize: { xs: '1.1rem', sm: '1.25rem' },
@@ -192,7 +192,7 @@ export default function Changelog() {
                                                                 background: categoryColors.border,
                                                                 transform: 'scaleY(0)',
                                                                 transformOrigin: 'bottom',
-                                                                transition: 'transform 0.3s ease',
+                                                                transition: 'transform 0.3s ease'
                                                             },
                                                             '&:hover': {
                                                                 borderLeftColor: categoryColors.text,
@@ -200,31 +200,31 @@ export default function Changelog() {
                                                                 transform: 'translateX(6px)',
                                                                 boxShadow: `0 4px 12px ${categoryColors.border}40`,
                                                                 '&::before': {
-                                                                    transform: 'scaleY(1)',
+                                                                    transform: 'scaleY(1)'
                                                                 },
                                                                 '& .change-icon': {
                                                                     opacity: 1,
-                                                                    transform: 'translateX(0)',
+                                                                    transform: 'translateX(0)'
                                                                 }
                                                             }
                                                         }}
                                                     >
-                                                        <CardContent sx={{ 
-                                                            py: 2, 
+                                                        <CardContent sx={{
+                                                            py: 2,
                                                             px: 2.5,
                                                             display: 'flex',
                                                             alignItems: 'flex-start',
                                                             gap: 1.5
                                                         }}>
-                                                            <CheckCircle sx={{ 
+                                                            <CheckCircle sx={{
                                                                 color: categoryColors.text,
                                                                 fontSize: '1.1rem',
                                                                 mt: 0.25,
                                                                 flexShrink: 0
                                                             }} />
-                                                            <Typography 
-                                                                variant='body1' 
-                                                                sx={{ 
+                                                            <Typography
+                                                                variant='body1'
+                                                                sx={{
                                                                     color: 'rgba(240, 240, 240, 0.95)',
                                                                     lineHeight: 1.7,
                                                                     fontSize: { xs: '0.9rem', sm: '1rem' },
@@ -233,9 +233,9 @@ export default function Changelog() {
                                                             >
                                                                 {change}
                                                             </Typography>
-                                                            <ArrowRight 
+                                                            <ArrowRight
                                                                 className="change-icon"
-                                                                sx={{ 
+                                                                sx={{
                                                                     color: categoryColors.text,
                                                                     fontSize: '1rem',
                                                                     opacity: 0,
@@ -243,7 +243,7 @@ export default function Changelog() {
                                                                     transition: 'all 0.3s ease',
                                                                     flexShrink: 0,
                                                                     mt: 0.25
-                                                                }} 
+                                                                }}
                                                             />
                                                         </CardContent>
                                                     </Card>

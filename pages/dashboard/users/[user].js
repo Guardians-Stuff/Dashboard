@@ -20,7 +20,7 @@ export default function UserPage(props) {
 
     /** @type {User} */ const user = props.user;
     /** @type {[ Number, Function ]} */ const [ tab, setTab ] = React.useState(router.query.tab || 'servers');
-    const [stats, setStats] = React.useState({ guilds: 0, infractions: 0, tickets: 0 });
+    const [ stats, setStats ] = React.useState({ guilds: 0, infractions: 0, tickets: 0 });
     
     React.useEffect(() => setTab(router.query.tab || 'servers'), [ router.query.tab ]);
     
@@ -29,7 +29,7 @@ export default function UserPage(props) {
         
         async function fetchStats() {
             try {
-                const [guildsRes, infractionsRes, ticketsRes] = await Promise.all([
+                const [ guildsRes, infractionsRes, ticketsRes ] = await Promise.all([
                     fetch(`/api/users/${user.id}/guilds`, { cache: 'no-cache' }).catch(() => ({ ok: false })),
                     fetch(`/api/users/${user.id}/infractions?pagination=1`, { cache: 'no-cache' }).catch(() => ({ ok: false })),
                     fetch(`/api/users/${user.id}/tickets?pagination=1`, { cache: 'no-cache' }).catch(() => ({ ok: false }))
@@ -46,7 +46,7 @@ export default function UserPage(props) {
         }
         
         fetchStats();
-    }, [user]);
+    }, [ user ]);
 
     if(!user && typeof window !== 'undefined') router.push('/dashboard');
 
@@ -78,9 +78,9 @@ export default function UserPage(props) {
                 <title>{user.username} - Guardian Dashboard</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box sx={{ 
-                display: 'flex', 
-                height: '100%', 
+            <Box sx={{
+                display: 'flex',
+                height: '100%',
                 width: '100%',
                 animation: 'fadeIn 0.6s ease-out',
                 '@keyframes fadeIn': {
@@ -88,10 +88,10 @@ export default function UserPage(props) {
                     to: { opacity: 1 }
                 }
             }}>
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    flexDirection: 'column', 
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
                     width: '100%',
                     padding: { xs: 2, sm: 3, md: 4 },
                     maxWidth: '1400px',
@@ -105,7 +105,7 @@ export default function UserPage(props) {
                                 sx={{
                                     color: 'rgba(255, 255, 255, 0.9)',
                                     '&:hover': {
-                                        background: 'rgba(60, 60, 60, 0.3)',
+                                        background: 'rgba(60, 60, 60, 0.3)'
                                     }
                                 }}
                             >
@@ -156,14 +156,14 @@ export default function UserPage(props) {
                                             </Typography>
                                         )}
                                         {user.bot && (
-                                            <Chip 
-                                                label="Bot" 
-                                                size="small" 
-                                                sx={{ 
+                                            <Chip
+                                                label="Bot"
+                                                size="small"
+                                                sx={{
                                                     background: 'rgba(88, 101, 242, 0.2)',
                                                     color: '#5865F2',
                                                     fontWeight: 600
-                                                }} 
+                                                }}
                                             />
                                         )}
                                         {user.verified && (
@@ -215,7 +215,7 @@ export default function UserPage(props) {
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
                                         transform: 'translateY(-4px)',
-                                        boxShadow: '0 8px 24px rgba(33, 150, 243, 0.3)',
+                                        boxShadow: '0 8px 24px rgba(33, 150, 243, 0.3)'
                                     }
                                 }}
                             >
@@ -240,7 +240,7 @@ export default function UserPage(props) {
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
                                         transform: 'translateY(-4px)',
-                                        boxShadow: '0 8px 24px rgba(244, 67, 54, 0.3)',
+                                        boxShadow: '0 8px 24px rgba(244, 67, 54, 0.3)'
                                     }
                                 }}
                             >
@@ -265,7 +265,7 @@ export default function UserPage(props) {
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
                                         transform: 'translateY(-4px)',
-                                        boxShadow: '0 8px 24px rgba(33, 150, 243, 0.3)',
+                                        boxShadow: '0 8px 24px rgba(33, 150, 243, 0.3)'
                                     }
                                 }}
                             >
@@ -282,8 +282,8 @@ export default function UserPage(props) {
                         </Grid>
                     </Grid>
 
-                    <Divider sx={{ 
-                        width: '100%', 
+                    <Divider sx={{
+                        width: '100%',
                         mb: 3,
                         borderColor: 'rgba(100, 100, 100, 0.3)',
                         animation: 'fadeIn 0.6s ease-out 0.3s both',
@@ -295,8 +295,8 @@ export default function UserPage(props) {
 
                     <TabContext value={tab}>
                         <Box sx={{ width: '100%', mb: 3 }}>
-                            <Tabs 
-                                value={tab} 
+                            <Tabs
+                                value={tab}
                                 onChange={(_, newTab) => router.push(`${user.id}?tab=${newTab}`, undefined, { shallow: true })}
                                 variant="scrollable"
                                 scrollButtons="auto"
@@ -317,7 +317,7 @@ export default function UserPage(props) {
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
                                             color: 'rgba(220, 220, 220, 0.9)',
-                                            background: 'rgba(60, 60, 60, 0.2)',
+                                            background: 'rgba(60, 60, 60, 0.2)'
                                         },
                                         '&.Mui-selected': {
                                             color: '#e0e0e0',

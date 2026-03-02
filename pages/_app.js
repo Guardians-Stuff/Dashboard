@@ -16,7 +16,7 @@ import '@fontsource/roboto/700.css';
 
 
 export default function App({ Component, pageProps: { ...pageProps } }) {
-    const [checksComplete, setChecksComplete] = React.useState(false);
+    const [ checksComplete, setChecksComplete ] = React.useState(false);
     
     React.useEffect(() => {
         // Check if we've already completed checks (stored in sessionStorage)
@@ -91,7 +91,7 @@ export default function App({ Component, pageProps: { ...pageProps } }) {
 
     // Show checking screen first (unless it's an API route or checks are complete)
     // Skip checking for API routes
-    const isApiRoute = typeof window !== 'undefined' && 
+    const isApiRoute = typeof window !== 'undefined' &&
         (window.location.pathname.startsWith('/api') || Router.pathname?.startsWith('/api'));
     
     if (!isApiRoute && !checksComplete) {

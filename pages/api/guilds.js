@@ -17,16 +17,28 @@ export default async function handler(req, res) {
         const cached = cacheData.get(`/api/guilds-${session.id}`);
         if(cached) return res.status(200).json(cached);
 
-        const botGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { cache: 'no-cache', headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } });
-        if(!botGuildsResponse.ok) {
-            const errorText = await botGuildsResponse.text();
-            logger.error(`Failed to fetch bot guilds: ${botGuildsResponse.status} - ${errorText}`);
-            return res.status(botGuildsResponse.status).send();
+        let botGuilds = [];
+        try {
+            // Use IPv4 localhost to avoid IPv6 connection issues
+            const hostUrl = process.env.NEXT_PUBLIC_HOST?.replace('::1', '127.0.0.1') || 'http://127.0.0.1:3000';
+            const botGuildsResponse = await fetch(`${hostUrl}/api/bot/guilds`, { 
+                cache: 'no-cache', 
+                headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } 
+            });
+            
+            if(!botGuildsResponse.ok) {
+                const errorText = await botGuildsResponse.text();
+                logger.error(`Failed to fetch bot guilds: ${botGuildsResponse.status} - ${errorText}`);
+                // Continue with empty bot guilds list if bot API fails
+            } else {
+                /** @type {Array<Guild>} */ const botGuildsJson = await botGuildsResponse.json();
+                botGuilds = botGuildsJson.reduce((previous, guild) => [ ...previous, guild.id ], []);
+                logger.api('/api/guilds', 200, `Fetched ${botGuilds.length} bot guilds: ${botGuilds.join(', ')}`);
+            }
+        } catch (error) {
+            logger.error(`Error fetching bot guilds: ${error.message}`);
+            // Continue with empty bot guilds list if fetch fails
         }
-
-        /** @type {Array<Guild>} */ const botGuildsJson = await botGuildsResponse.json();
-        const botGuilds = botGuildsJson.reduce((previous, guild) => [ ...previous, guild.id ], []);
-        logger.api('/api/guilds', 200, `Fetched ${botGuilds.length} bot guilds: ${botGuilds.join(', ')}`);
 
         const userGuildsResponse = await fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${session.account.access_token}` } });
         if(!userGuildsResponse.ok) return res.status(userGuildsResponse.status).send();

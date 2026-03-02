@@ -41,8 +41,8 @@ export default function GuildNavigator(props) {
                         <ListItemIcon>
                             <Avatar src={guild.iconURL}>{guild.name.slice(0, 1)}</Avatar>
                         </ListItemIcon>
-                        <ListItemText 
-                            primary={guild.hasBot ? guild.name : null} 
+                        <ListItemText
+                            primary={guild.hasBot ? guild.name : null}
                             secondary={guild.hasBot ? null : guild.name}
                             primaryTypographyProps={{
                                 sx: { color: 'rgba(255, 255, 255, 0.9)' }
@@ -51,15 +51,15 @@ export default function GuildNavigator(props) {
                                 sx: { color: 'rgba(200, 200, 200, 0.7)' }
                             }}
                         />
-                        {guild.hasBot ? guild.authorized ? openCollapse ? 
-                            <ExpandLessIcon 
-                                onClick={handleClick} 
+                        {guild.hasBot ? guild.authorized ? openCollapse ?
+                            <ExpandLessIcon
+                                onClick={handleClick}
                                 sx={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.2)' } }}
-                            /> : 
-                            <ExpandMoreIcon 
-                                onClick={handleClick} 
+                            /> :
+                            <ExpandMoreIcon
+                                onClick={handleClick}
                                 sx={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'transform 0.3s ease', '&:hover': { transform: 'scale(1.2)' } }}
-                            /> : 
+                            /> :
                             <LockIcon sx={{ color: 'rgba(150, 150, 150, 0.7)' }} /> : ''}
                     </ListItemButton>
                 </ListItem>
@@ -82,7 +82,7 @@ export default function GuildNavigator(props) {
                             <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                                 <InfoIcon></InfoIcon>
                             </ListItemIcon>
-                            <ListItemText 
+                            <ListItemText
                                 primary='Overview'
                                 primaryTypographyProps={{
                                     sx: { color: 'rgba(255, 255, 255, 0.9)' }
@@ -105,7 +105,7 @@ export default function GuildNavigator(props) {
                             <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                                 <GppMaybeIcon></GppMaybeIcon>
                             </ListItemIcon>
-                            <ListItemText 
+                            <ListItemText
                                 primary='Infractions'
                                 primaryTypographyProps={{
                                     sx: { color: 'rgba(255, 255, 255, 0.9)' }
@@ -128,7 +128,7 @@ export default function GuildNavigator(props) {
                             <ListItemIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                                 <ChatIcon></ChatIcon>
                             </ListItemIcon>
-                            <ListItemText 
+                            <ListItemText
                                 primary='Tickets'
                                 primaryTypographyProps={{
                                     sx: { color: 'rgba(255, 255, 255, 0.9)' }

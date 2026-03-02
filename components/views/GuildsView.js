@@ -29,7 +29,7 @@ export default function GuildsView(){
         if(router.query.user) {
             fetchGuilds();
         }
-    }, [router.query.user]);
+    }, [ router.query.user ]);
     return (
         <Grid container spacing={1} sx={{ justifyContent: 'center', alignContent: 'center' }}>
             {guilds.map(guild => {

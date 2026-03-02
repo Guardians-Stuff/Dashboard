@@ -7,76 +7,104 @@ import Infractions from '@/schemas/Infractions';
 
 const logger = require('@/lib/logger');
 
-/**
- * @param {NextApiRequest} req
- * @param {NextApiResponse} res
- */
 export default async function handler(req, res) {
-    let pagination = req.query.pagination;
-    if(isNaN(pagination) || pagination < 1) pagination = 1;
+    let pagination = parseInt(req.query.pagination) || 1;
+    if (isNaN(pagination) || pagination < 1) pagination = 1;
 
-    const filter = {};
-    if(req.query.types) filter.type = { $in: req.query.types.split(',') };
-    if(req.query.active) filter.active = true;
-
-    /** @type {import('next-auth/providers/discord').DiscordProfile} */ const session = await getServerSession(req, res, authOptions);
-    if(!session && req.headers.authorization != `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) return res.status(403).json({
-        error: true,
-        message: 'You must be logged in to do this',
-        infractions: [],
-        pagination: { page: pagination, totalPages: 0 }
-    });
-
-    await dbConnect();
-
-    let guilds = [];
-    try {
-        const guildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/users/${req.query.user}/guilds`, { cache: 'no-cache', headers: { Cookie: req.headers.cookie } });
-        if(guildsResponse.ok) {
-            const guildsData = await guildsResponse.json();
-            guilds = guildsData.guilds || [];
-        }
-    } catch(error) {
-        logger.warn(`Error fetching guilds for user ${req.query.user}:`, error.message);
-    }
-
-    const ids = await Infractions.find({}, '_id').sort({ _id: -1 }).lean();
-    const pages = [];
-
-    for(let i = 0; i < ids.length; i += 20){
-        const tempIds = ids.slice(i, i + 20);
-        pages.push(tempIds[0]);
-    }
-
-    Infractions
-        .find({
-            _id: { $lte: pages[pagination - 1]?._id },
-            guild: { $in: guilds.map(guild => guild.id) },
-            user: req.query.user,
-            ...filter
-        })
-        .sort({ _id: -1 })
-        .limit(20)
-        .lean()
-        .then(async (/** @type {Array<import('@/schemas/Infractions').Infraction>} */ results) => {
-            const infractions = results.map(infraction => {
-                infraction._id = infraction._id.toString();
-
-                return infraction;
-            });
-
-            res.status(200).json({
-                error: false,
-                message: '',
-                infractions: infractions,
-                pagination: pagination
-            });
-        }).catch(() => {
-            res.status(500).json({
-                error: true,
-                message: 'Something went wrong',
-                infractions: [],
-                pagination: { page: pagination, totalPages: pages.length }
-            });
+    const userId = req.query.user;
+    
+    if (!userId) {
+        return res.status(400).json({
+            error: true,
+            message: 'User ID is required',
+            infractions: [],
+            pagination: { page: pagination, totalPages: 0 }
         });
+    }
+
+    const filter = { user: userId };
+    
+    if (req.query.types && req.query.types.length > 0) {
+        const types = Array.isArray(req.query.types) ? req.query.types : req.query.types.split(',');
+        filter.type = { $in: types };
+    }
+    
+    if (req.query.active === 'true') {
+        filter.active = true;
+    }
+
+    const session = await getServerSession(req, res, authOptions);
+    if (!session && req.headers.authorization !== `Bearer ${process.env.DISCORD_CLIENT_TOKEN}`) {
+        return res.status(403).json({
+            error: true,
+            message: 'You must be logged in to do this',
+            infractions: [],
+            pagination: { page: pagination, totalPages: 0 }
+        });
+    }
+
+    try {
+        console.log('Connecting to database for user infractions...');
+        await dbConnect();
+        console.log('Database connected successfully');
+
+        let userGuilds = [];
+        try {
+            const hostUrl = process.env.NEXT_PUBLIC_HOST?.replace('::1', '127.0.0.1') || 'http://127.0.0.1:3000';
+            const guildsResponse = await fetch(`${hostUrl}/api/users/${userId}/guilds`, { 
+                cache: 'no-cache', 
+                headers: { Cookie: req.headers.cookie } 
+            });
+            
+            if (guildsResponse.ok) {
+                const guildsData = await guildsResponse.json();
+                userGuilds = (guildsData.guilds || []).map(guild => guild.id);
+                console.log(`User ${userId} is in ${userGuilds.length} guilds`);
+            }
+        } catch (error) {
+            logger.warn(`Error fetching guilds for user ${userId}:`, error.message);
+        }
+
+        if (userGuilds.length > 0) {
+            filter.guild = { $in: userGuilds };
+        }
+
+        const totalCount = await Infractions.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / 20);
+        
+        console.log(`Found ${totalCount} infractions for user ${userId}`);
+
+        const infractions = await Infractions
+            .find(filter)
+            .sort({ time: -1 })
+            .skip((pagination - 1) * 20)
+            .limit(20)
+            .lean();
+
+        console.log(`Fetched ${infractions.length} infractions for page ${pagination}`);
+
+        const serializedInfractions = infractions.map(infraction => ({
+            ...infraction,
+            _id: infraction._id.toString()
+        }));
+
+        logger.api(`/api/users/${userId}/infractions`, 200, `Returned ${infractions.length} infractions`);
+        
+        res.status(200).json({
+            error: false,
+            message: '',
+            infractions: serializedInfractions,
+            pagination: { page: pagination, totalPages: totalPages }
+        });
+
+    } catch (error) {
+        console.error('Error fetching user infractions:', error);
+        logger.error(`Error fetching infractions for user ${userId}:`, error);
+        res.status(500).json({
+            error: true,
+            message: 'Something went wrong: ' + error.message,
+            infractions: [],
+            pagination: { page: pagination, totalPages: 0 }
+        });
+    }
 }

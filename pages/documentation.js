@@ -9,7 +9,7 @@ import { Book, ArrowBack, Code, Settings, Security, SupportAgent, Shield, Expand
 import styles from '@/styles/Home.module.css';
 
 export default function Documentation() {
-    const [expandedSection, setExpandedSection] = useState(null);
+    const [ expandedSection, setExpandedSection ] = useState(null);
 
     const handleSectionChange = (section) => (event, isExpanded) => {
         setExpandedSection(isExpanded ? section : null);
@@ -31,25 +31,25 @@ export default function Documentation() {
                             </Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Click the 'Invite to server' button on the homepage"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Select your Discord server from the dropdown menu"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Review and authorize the required permissions (Administrator recommended)"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Guardian will join your server and be ready to use"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -70,25 +70,25 @@ export default function Documentation() {
                             </Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Visit the dashboard homepage and click 'Login' or navigate to /dashboard"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Authorize with your Discord account (you'll only see servers where you have admin permissions)"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Select a server from the list to configure its settings"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Use the navigation tabs to access different configuration sections"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -167,25 +167,25 @@ export default function Documentation() {
                             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 1, mt: 2 }}>Infraction Types</Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Warnings - Track rule violations without taking action"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Kicks - Remove users from the server temporarily"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Bans - Permanently prevent users from rejoining"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Mutes - Temporarily restrict user communication"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -197,25 +197,25 @@ export default function Documentation() {
                             </Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="User who received the infraction"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Moderator who issued it"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Reason and timestamp"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Active status (can be marked inactive)"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -283,19 +283,19 @@ export default function Documentation() {
                             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 1, mt: 2 }}>Step 2: Configure Settings</Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Category: Select the category where ticket channels will be created"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Channel: Choose the channel where users can create tickets (usually a support channel)"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Support Role: Assign the role that can view and respond to tickets"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -318,19 +318,19 @@ export default function Documentation() {
                             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 1, mt: 2 }}>In Discord</Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="View all tickets in the Tickets tab of your server dashboard"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Use /ticket close to close a ticket (optionally with a reason)"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Closed tickets are automatically deleted after a set time period"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -361,25 +361,25 @@ export default function Documentation() {
                             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 1, mt: 2 }}>Configuration</Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Join Amount: Set how many users joining within the time window triggers a raid alert"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Join Within: Time window in seconds (e.g., 10 users in 60 seconds)"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Action: Choose to automatically kick or ban detected raiders"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Lockdown: Enable automatic server lockdown when a raid is detected"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -435,19 +435,19 @@ export default function Documentation() {
                             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 1, mt: 3 }}>Setup Instructions</Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Enable verification in your server dashboard"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Select your preferred verification method"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Choose the verification channel and role to assign upon verification"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -498,19 +498,19 @@ export default function Documentation() {
                             </Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Message edits and deletions"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Channel and role creation/deletion"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Member joins and leaves"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -522,19 +522,19 @@ export default function Documentation() {
                             </Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Warnings, kicks, and bans"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Role assignments and removals"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Channel restrictions and timeouts"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -564,19 +564,19 @@ export default function Documentation() {
                             <Typography variant="h6" sx={{ color: '#e0e0e0', mb: 1, mt: 2 }}>Setup</Typography>
                             <List sx={{ pl: 2 }}>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Enable suggestions in your server dashboard"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Select the channel where suggestions will be posted"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
                                 </ListItem>
                                 <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 1 }}>
-                                    <ListItemText 
+                                    <ListItemText
                                         primary="Optionally enable automatic upvote/downvote reactions"
                                         primaryTypographyProps={{ sx: { color: 'rgba(200, 200, 200, 0.9)' } }}
                                     />
@@ -620,7 +620,7 @@ export default function Documentation() {
                                 sx={{
                                     color: 'rgba(255, 255, 255, 0.9)',
                                     '&:hover': {
-                                        background: 'rgba(60, 60, 60, 0.3)',
+                                        background: 'rgba(60, 60, 60, 0.3)'
                                     }
                                 }}
                             >
@@ -634,7 +634,7 @@ export default function Documentation() {
                                 backdropFilter: 'blur(10px)',
                                 border: '1px solid rgba(100, 100, 100, 0.3)',
                                 borderRadius: '16px',
-                                mb: 4,
+                                mb: 4
                             }}
                         >
                             <CardContent sx={{ p: 4 }}>
@@ -665,11 +665,11 @@ export default function Documentation() {
                                         mb: 3,
                                         '&:before': { display: 'none' },
                                         '&.Mui-expanded': {
-                                            margin: '0 0 24px 0',
+                                            margin: '0 0 24px 0'
                                         },
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            borderColor: `${section.color}60`,
+                                            borderColor: `${section.color}60`
                                         }
                                     }}
                                 >
@@ -711,7 +711,7 @@ export default function Documentation() {
                                 backdropFilter: 'blur(10px)',
                                 border: '1px solid rgba(100, 100, 100, 0.3)',
                                 borderRadius: '16px',
-                                mt: 4,
+                                mt: 4
                             }}
                         >
                             <CardContent sx={{ p: 4 }}>
@@ -736,7 +736,7 @@ export default function Documentation() {
                                                 borderColor: 'rgba(100, 100, 100, 0.3)',
                                                 '&:hover': {
                                                     borderColor: 'rgba(150, 150, 150, 0.5)',
-                                                    background: 'rgba(60, 60, 60, 0.3)',
+                                                    background: 'rgba(60, 60, 60, 0.3)'
                                                 }
                                             }}
                                         >
@@ -753,7 +753,7 @@ export default function Documentation() {
                                                 borderColor: 'rgba(100, 100, 100, 0.3)',
                                                 '&:hover': {
                                                     borderColor: 'rgba(150, 150, 150, 0.5)',
-                                                    background: 'rgba(60, 60, 60, 0.3)',
+                                                    background: 'rgba(60, 60, 60, 0.3)'
                                                 }
                                             }}
                                         >
@@ -770,7 +770,7 @@ export default function Documentation() {
                                                 borderColor: 'rgba(100, 100, 100, 0.3)',
                                                 '&:hover': {
                                                     borderColor: 'rgba(150, 150, 150, 0.5)',
-                                                    background: 'rgba(60, 60, 60, 0.3)',
+                                                    background: 'rgba(60, 60, 60, 0.3)'
                                                 }
                                             }}
                                         >
@@ -786,4 +786,3 @@ export default function Documentation() {
         </>
     );
 }
-

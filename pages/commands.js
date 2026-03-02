@@ -32,14 +32,14 @@ export default function Commands(props) {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Box className={styles.background}>
-                <Box sx={{ 
+                <Box sx={{
                     padding: { xs: '24px 16px', sm: '32px 24px' },
                     maxWidth: '1400px',
                     margin: '0 auto'
                 }}>
-                    <Typography 
-                        variant='h3' 
-                        sx={{ 
+                    <Typography
+                        variant='h3'
+                        sx={{
                             mb: 3,
                             fontWeight: 700,
                             background: 'linear-gradient(135deg, #e0e0e0 0%, #c0c0c0 100%)',
@@ -56,8 +56,8 @@ export default function Commands(props) {
                         Commands
                     </Typography>
                     <TabContext value={activeCategory}>
-                        <Box sx={{ 
-                            borderBottom: 1, 
+                        <Box sx={{
+                            borderBottom: 1,
                             borderColor: 'rgba(100, 100, 100, 0.3)',
                             mb: 3,
                             '& .MuiTabs-indicator': {
@@ -79,7 +79,7 @@ export default function Commands(props) {
                                         fontSize: '1rem',
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            color: 'rgba(220, 220, 220, 0.9)',
+                                            color: 'rgba(220, 220, 220, 0.9)'
                                         },
                                         '&.Mui-selected': {
                                             color: '#d0d0d0',
@@ -123,14 +123,14 @@ export default function Commands(props) {
                                                 '&:hover': {
                                                     transform: 'translateY(-4px)',
                                                     borderColor: 'rgba(150, 150, 150, 0.5)',
-                                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
                                                 }
                                             }}
                                         >
                                             <CardContent sx={{ position: 'relative', pr: 6 }}>
-                                                <Typography 
-                                                    variant='h6' 
-                                                    sx={{ 
+                                                <Typography
+                                                    variant='h6'
+                                                    sx={{
                                                         mb: 1,
                                                         fontWeight: 600,
                                                         color: '#d0d0d0'
@@ -138,9 +138,9 @@ export default function Commands(props) {
                                                 >
                                                     /{command.name}
                                                 </Typography>
-                                                <Typography 
-                                                    variant='body1' 
-                                                    sx={{ 
+                                                <Typography
+                                                    variant='body1'
+                                                    sx={{
                                                         color: 'rgba(220, 220, 220, 0.9)',
                                                         lineHeight: 1.6
                                                     }}
@@ -151,34 +151,34 @@ export default function Commands(props) {
                                                     <>
                                                         {collapsedCommands[command.name] ? (
                                                             <ExpandLessIcon
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: '1rem',
-                                                                right: '1rem',
-                                                                color: 'rgba(200, 200, 200, 0.8)',
-                                                                cursor: 'pointer',
-                                                                transition: 'all 0.3s ease',
-                                                                '&:hover': {
-                                                                    color: '#ffffff',
-                                                                    transform: 'scale(1.2)'
-                                                                }
-                                                            }}
+                                                                sx={{
+                                                                    position: 'absolute',
+                                                                    top: '1rem',
+                                                                    right: '1rem',
+                                                                    color: 'rgba(200, 200, 200, 0.8)',
+                                                                    cursor: 'pointer',
+                                                                    transition: 'all 0.3s ease',
+                                                                    '&:hover': {
+                                                                        color: '#ffffff',
+                                                                        transform: 'scale(1.2)'
+                                                                    }
+                                                                }}
                                                                 onClick={() => setCollapsedCommands({ ...collapsedCommands, [command.name]: false })}
                                                             />
                                                         ) : (
                                                             <ExpandMore
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: '1rem',
-                                                                right: '1rem',
-                                                                color: 'rgba(200, 200, 200, 0.8)',
-                                                                cursor: 'pointer',
-                                                                transition: 'all 0.3s ease',
-                                                                '&:hover': {
-                                                                    color: '#ffffff',
-                                                                    transform: 'scale(1.2)'
-                                                                }
-                                                            }}
+                                                                sx={{
+                                                                    position: 'absolute',
+                                                                    top: '1rem',
+                                                                    right: '1rem',
+                                                                    color: 'rgba(200, 200, 200, 0.8)',
+                                                                    cursor: 'pointer',
+                                                                    transition: 'all 0.3s ease',
+                                                                    '&:hover': {
+                                                                        color: '#ffffff',
+                                                                        transform: 'scale(1.2)'
+                                                                    }
+                                                                }}
                                                                 onClick={() => setCollapsedCommands({ ...collapsedCommands, [command.name]: true })}
                                                             />
                                                         )}

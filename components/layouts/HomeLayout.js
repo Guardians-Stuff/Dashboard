@@ -21,11 +21,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     background: 'linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%)',
     backdropFilter: 'blur(10px)',
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-    borderBottom: '1px solid rgba(80, 80, 80, 0.3)',
+    borderBottom: '1px solid rgba(80, 80, 80, 0.3)'
 }));
 
 const StyledMenuItem = styled(MenuItem, {
-    shouldForwardProp: (prop) => prop !== 'active',
+    shouldForwardProp: (prop) => prop !== 'active'
 })(({ theme, active }) => ({
     position: 'relative',
     borderRadius: '8px',
@@ -40,17 +40,17 @@ const StyledMenuItem = styled(MenuItem, {
         width: '60%',
         height: '2px',
         background: 'linear-gradient(90deg, transparent, rgba(200, 200, 200, 0.8), transparent)',
-        transition: 'transform 0.3s ease',
+        transition: 'transform 0.3s ease'
     },
     '&:hover': {
         background: 'rgba(60, 60, 60, 0.3)',
         transform: 'translateY(-2px)',
         '&::after': {
-            transform: 'translateX(-50%) scaleX(1)',
+            transform: 'translateX(-50%) scaleX(1)'
         }
     },
     ...(active && {
-        background: 'rgba(50, 50, 50, 0.4)',
+        background: 'rgba(50, 50, 50, 0.4)'
     })
 }));
 
@@ -62,7 +62,7 @@ export default function HomeLayout(props) {
     const navItems = [
         { label: 'Home', path: '/' },
         { label: 'Commands', path: '/commands' },
-        { label: 'Changelog', path: '/changelog' },
+        { label: 'Changelog', path: '/changelog' }
     ];
 
     return (
@@ -75,16 +75,16 @@ export default function HomeLayout(props) {
                             return (
                                 <StyledMenuItem key={item.path} active={isActive}>
                                     <Link href={item.path} style={{ textDecoration: 'none', width: '100%' }}>
-                                        <Typography 
-                                            variant='h7' 
-                                            noWrap 
+                                        <Typography
+                                            variant='h7'
+                                            noWrap
                                             component="div"
                                             sx={{
                                                 color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.9)',
                                                 fontWeight: isActive ? 600 : 500,
                                                 transition: 'all 0.3s ease',
                                                 '&:hover': {
-                                                    color: '#fff',
+                                                    color: '#fff'
                                                 }
                                             }}
                                         >
@@ -109,7 +109,7 @@ export default function HomeLayout(props) {
                                 '&:hover': {
                                     color: '#fff',
                                     transform: 'translateY(-2px)',
-                                    background: 'rgba(60, 60, 60, 0.3)',
+                                    background: 'rgba(60, 60, 60, 0.3)'
                                 }
                             }}
                         >
@@ -125,7 +125,7 @@ export default function HomeLayout(props) {
                                 '&:hover': {
                                     color: '#fff',
                                     transform: 'translateY(-2px)',
-                                    background: 'rgba(60, 60, 60, 0.3)',
+                                    background: 'rgba(60, 60, 60, 0.3)'
                                 }
                             }}
                         >

@@ -27,9 +27,9 @@ export default async function handler(req, res) {
         });
 
         // Fetch all bot guilds
-        const botGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, { 
-            cache: 'no-cache', 
-            headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` } 
+        const botGuildsResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/bot/guilds`, {
+            cache: 'no-cache',
+            headers: { Authorization: `Bearer ${process.env.DISCORD_CLIENT_TOKEN}` }
         });
         
         if(!botGuildsResponse.ok) {
