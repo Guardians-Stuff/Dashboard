@@ -52,3 +52,6 @@ This launches the dashboard at [http://localhost:3000](http://localhost:3000) by
 Visit [http://localhost:3000](http://localhost:3000) in your browser to use Guardian Dashboard. 🦾🖥️
 
 For production or further deployment, check additional instructions in this README. _(coming soon)_ 🚧
+
+
+<!-- Automated minor fix for issue #3 -->
